@@ -18,6 +18,7 @@ import java.util.List;
 public class TwitterSearchController {
 
   @RequestMapping(method=RequestMethod.POST)
+  @CrossOrigin
   public TwitterSearchResponse twitterSearch(
     @RequestBody TwitterSearchRequest req
   ) {
