@@ -1,0 +1,49 @@
+plugins {
+	id 'org.springframework.boot' version '2.3.3.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+	id 'java'
+}
+
+group = 'com.phish'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-batch'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.flywaydb:flyway-core'
+	implementation 'org.apache.commons:commons-lang3'
+	implementation "io.reactivex.rxjava3:rxjava:3.0.7"
+	implementation 'com.codepoetics:protonpack:1.16'
+	implementation 'commons-validator:commons-validator:1.7'
+	implementation 'com.opencsv:opencsv:5.2'
+	implementation 'com.sendgrid:sendgrid-java:4.6.4'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	runtimeOnly 'com.oracle.database.jdbc:ojdbc8'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+	testImplementation 'org.springframework.batch:spring-batch-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+}
+
+test {
+	useJUnitPlatform()
+}
+
+bootJar {
+  baseName = 'lyricWallSpring'
+  version =  '0.1.0'
+}
+//debug用にgradleがJVMに引数を渡せる必要がある
+bootRun {
+  systemProperties = System.properties  //左がjdkの引数、右がgradleの引数らしい。
+  //上記の行により、gradle実行時の以下のコマンドライン引数がjdkに渡される。
+  jvmArgs=["-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:5050"]
+}

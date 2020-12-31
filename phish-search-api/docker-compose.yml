@@ -1,0 +1,18 @@
+version: '3'
+services:
+  app:
+    build: .
+    image: adoptopenjdk/openjdk11:ubi
+    ports:
+      - "8080:8080"
+      - "5050:5050"
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: ./gradlew bootRun -Ddevelopment=true
+    networks:
+      - default
+      - shared-network
+networks:
+  shared-network:
+    external: true

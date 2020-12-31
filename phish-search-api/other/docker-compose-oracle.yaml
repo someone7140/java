@@ -1,0 +1,22 @@
+version: '2'
+services:
+  db:
+    image: oracle/database:19.3.0-ee
+    container_name: oracle
+    ports:
+      - 1521:1521
+      - 5500:5500
+    volumes:
+      - ./oradata:/opt/oracle/oradata
+    environment:
+      ORACLE_SID: ORCL
+      ORACLE_PDB: SAMPLE
+      ORACLE_PWD: password
+      ORACLE_CHARACTERSET: AL32UTF8
+      ORA_SDTZ: Japan
+    networks:
+      - default
+      - shared-network
+networks:
+  shared-network:
+    external: true
