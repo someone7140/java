@@ -1,0 +1,74 @@
+@startuml ddd-output
+package com.ddd.sampleDomain.item {
+class com.ddd.sampleDomain.item.Item {
+
+{field} java.lang.String id
+{field} java.lang.String name
+{field} int price
+{field} int stock
+{method} +java.util.List<com.ddd.sampleDomain.item.Item> addItem(java.util.List<com.ddd.sampleDomain.item.Item> items)
+}
+class com.ddd.sampleDomain.item.ItemBook <<商品（書籍）>> {
+
+{field} java.lang.String isdnCode
+{field} java.lang.String[] authors
+{field} int page
+{method} +boolean isBookPageCategory(int targetPage)
+}
+note right of com.ddd.sampleDomain.item.ItemBook::"isBookPageCategory(int targetPage)" 
+ 該当のページ数から+-30ページ以内ならそのカテゴリーとみなす
+end note
+com.ddd.sampleDomain.item.Item <|--- com.ddd.sampleDomain.item.ItemBook
+
+}
+package com.ddd.sampleDomain {
+class com.ddd.sampleDomain.Customer {
+
+{field} java.lang.String id
+{field} java.lang.String name
+{field} java.util.List<com.ddd.sampleDomain.Order> orders
+{field} int age
+{method} +void addItemToOrder(java.lang.String orderId, com.ddd.sampleDomain.item.Item addItem)
+{method} +com.ddd.sampleDomain.delivery.Delivery derlveryRequest(java.lang.String deliveryAddress, java.time.LocalDateTime deliveryDate, java.lang.String orderId, com.ddd.sampleDomain.delivery.Delivery delivery)
+{method} -void deleteOrder(java.util.List<java.lang.String> deleteOrderIds)
+}
+note right of com.ddd.sampleDomain.Customer::"addItemToOrder(java.lang.String orderId, com.ddd.sampleDomain.item.Item addItem)" 
+ 注文への商品追加
+end note
+com.ddd.sampleDomain.Customer ..> com.ddd.sampleDomain.item.Item : addItem >
+class com.ddd.sampleDomain.Order <<注文>> {
+
+{field} java.lang.String id
+{field} com.ddd.sampleDomain.item.Item[] items
+{method} +int getTotalPrice()
+{method} +java.util.List<com.ddd.sampleDomain.item.Item> getFilteringItems(java.lang.String name)
+}
+note left: 配下に商品を持つ注文情報
+com.ddd.sampleDomain.Order *-- com.ddd.sampleDomain.item.Item
+com.ddd.sampleDomain.Customer *-- com.ddd.sampleDomain.Order
+
+}
+package com.ddd.sampleDomain.delivery {
+interface com.ddd.sampleDomain.delivery.Delivery {
+
+{method} +void deliveryRegister(java.lang.String deliveryAddress, java.time.LocalDateTime deliveryDate, com.ddd.sampleDomain.Order order)
+}
+com.ddd.sampleDomain.Customer ..> com.ddd.sampleDomain.delivery.Delivery : deliveryRegister >
+class com.ddd.sampleDomain.delivery.DeliveryNormal <<通常配送>> {
+
+{field} java.lang.String id
+{field} java.lang.String deliveryAddress
+{field} java.time.LocalDateTime deliveryDate
+{field} com.ddd.sampleDomain.Order order
+{method} +void deliveryRegister(java.lang.String deliveryAddress, java.time.LocalDateTime deliveryDate, com.ddd.sampleDomain.Order order)
+}
+note left: 通常配送を登録するクラス
+note right of com.ddd.sampleDomain.delivery.DeliveryNormal::"deliveryRegister(java.lang.String deliveryAddress, java.time.LocalDateTime deliveryDate, com.ddd.sampleDomain.Order order)" 
+ 配送の登録
+end note
+com.ddd.sampleDomain.delivery.Delivery <|--- com.ddd.sampleDomain.delivery.DeliveryNormal
+com.ddd.sampleDomain.delivery.DeliveryNormal -- com.ddd.sampleDomain.Order
+
+}
+
+@enduml

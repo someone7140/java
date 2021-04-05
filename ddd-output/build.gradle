@@ -1,0 +1,27 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+repositories {
+	mavenCentral()
+}
+
+compileJava {
+	options.compilerArgs << '-parameters'
+}
+
+dependencies {
+	compile 'com.google.guava:guava:30.1-jre'
+	compile 'org.apache.commons:commons-lang3:3.7'
+	compile 'org.apache.commons:commons-collections4:4.0'
+	compileOnly 'org.projectlombok:lombok:1.18.16'
+	annotationProcessor 'org.projectlombok:lombok:1.18.16'
+
+	testCompileOnly 'org.projectlombok:lombok:1.18.16'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.16'
+}
+
+jar {
+	manifest {
+		attributes 'Main-Class': 'com.ddd.Main'
+	}
+}
