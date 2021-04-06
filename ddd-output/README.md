@@ -20,7 +20,7 @@
 ### PlantUMLファイル（pu）の出力
 * [ddd-output.zip](https://github.com/someone7140/java/blob/master/ddd-output/ddd-output.zip "ddd-output.zip")のファイルを任意のパスにダウンロードし解凍してください。
 * 解凍後のbinフォルダから、以下の形式でスクリプトを実行するとpuファイルが出力されます。  
-    ./ddd-output com.ddd.Main `クラスファイルのパス` `puファイルの出力先` `出力対象のパッケージ名（配下のパッケージが出力対象）`
+    ./ddd-output com.ddd.Main `クラスファイルの出力先パス` `puファイルの出力先` `出力対象のパッケージ名（配下のパッケージが出力対象）`
 * 実行形式の例は以下の通りです。  
     `./ddd-output com.ddd.Main /Users/someone7140/git/java/ddd-sample/build/classes /Users/someone7140/git/java/ddd-output/output-file-sample/ddd-output.pu com.ddd.sampleDomain`
 
