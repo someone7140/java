@@ -47,3 +47,6 @@
 
 * 以下は[こちら](https://github.com/someone7140/java/tree/master/ddd-sample "こちら")のサンプルプロジェクトで、アノテーションを付与した結果です。
 ![ddd-output](https://user-images.githubusercontent.com/33390784/113724751-a0153900-972d-11eb-83c0-68e3fbec5f2d.png)
+
+## 【License】
+The DDD-Output is licensed under the MIT License.
