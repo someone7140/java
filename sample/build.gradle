@@ -1,0 +1,14 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+repositories {
+	mavenCentral()
+}
+
+compileJava {
+	options.compilerArgs << '-parameters'
+}
+
+dependencies {
+	compile 'org.apache.commons:commons-lang3:3.7'
+}
