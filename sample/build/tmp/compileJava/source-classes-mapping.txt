@@ -1,2 +1,5 @@
 sample/ReplaceEachSample.java
  sample.ReplaceEachSample
+sample/TypeParamSample.java
+ sample.TypeParamSample
+ sample.TypeParamTest
