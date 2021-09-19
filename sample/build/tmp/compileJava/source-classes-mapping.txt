@@ -1,5 +1,9 @@
-sample/ReplaceEachSample.java
- sample.ReplaceEachSample
 sample/TypeParamSample.java
  sample.TypeParamSample
  sample.TypeParamTest
+sample/ReplaceEachSample.java
+ sample.ReplaceEachSample
+sample/StringInterpolation.java
+ sample.StringInterpolation
+ sample.StringInterpolation$Item
+ sample.StringInterpolation$Item$ItemBuilder
