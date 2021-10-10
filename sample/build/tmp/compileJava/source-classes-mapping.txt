@@ -7,3 +7,5 @@ sample/StringInterpolation.java
  sample.StringInterpolation
  sample.StringInterpolation$Item
  sample.StringInterpolation$Item$ItemBuilder
+sample/MapEntryTest.java
+ sample.MapEntryTest
