@@ -1,0 +1,2 @@
+- ローカル実行の際に環境変数に`SPRING_PROFILES_ACTIVE=local`を設定する。
+- ローカルからgraphqlを実行する場合は、http://localhost:8080/graphiql?path=/graphql にアクセスする。

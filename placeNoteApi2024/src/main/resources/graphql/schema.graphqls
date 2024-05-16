@@ -1,0 +1,18 @@
+type Query {
+    getAccountUserByToken: AccountUserResponse!
+}
+
+type Mutation {
+    googleAuthCodeVerify(authCode: String!): GoogleAuthCodeVerifyResponse!
+}
+
+type AccountUserResponse {
+    token: String!
+    userSettingId: String!
+    name: String!
+}
+
+type GoogleAuthCodeVerifyResponse {
+    token: String!
+}
+
