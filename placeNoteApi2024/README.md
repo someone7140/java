@@ -1,2 +1,3 @@
 - ローカル実行の際に環境変数に`SPRING_PROFILES_ACTIVE=local`を設定する。
 - ローカルからgraphqlを実行する場合は、http://localhost:8080/graphiql?path=/graphql にアクセスする。
+- [mongo-jdbc-driver](https://github.com/DataGrip/mongo-jdbc-driver/releases/)のページからjarをダウンロードして、libs配下に`mongo-jdbc-driver-1.19.jar`の形式で格納。
