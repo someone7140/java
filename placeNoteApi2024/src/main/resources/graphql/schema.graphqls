@@ -4,6 +4,7 @@ type Query {
 
 type Mutation {
     googleAuthCodeVerify(authCode: String!): GoogleAuthCodeVerifyResponse!
+    addAccountUserByGoogle(userSettingId: String!, name: String!, authToken: String!): AccountUserResponse!
 }
 
 type AccountUserResponse {

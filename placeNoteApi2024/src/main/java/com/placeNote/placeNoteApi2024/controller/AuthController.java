@@ -11,11 +11,14 @@ import org.springframework.graphql.data.method.annotation.QueryMapping;
 import com.placeNote.placeNoteApi2024.model.graphql.auth.AccountUserResponse;
 import com.placeNote.placeNoteApi2024.model.graphql.auth.GoogleAuthCodeVerifyResponse;
 import com.placeNote.placeNoteApi2024.service.userAccount.GoogleAuthService;
+import com.placeNote.placeNoteApi2024.service.userAccount.UserAccountService;
 
 @Controller
 public class AuthController {
     @Autowired
     GoogleAuthService googleAuthService;
+    @Autowired
+    UserAccountService userAccountService;
 
     @MutationMapping
     public GoogleAuthCodeVerifyResponse googleAuthCodeVerify(@Argument String authCode) throws GraphqlErrorException {
@@ -24,6 +27,17 @@ public class AuthController {
         // トークンの取得
         String token = googleAuthService.getTokenGoogleAuthForRegister(googleAuthPayload.getEmail());
         return new GoogleAuthCodeVerifyResponse(token);
+    }
+
+    @MutationMapping
+    public AccountUserResponse addAccountUserByGoogle(
+            @Argument String userSettingId,
+            @Argument String name,
+            @Argument String authToken) throws GraphqlErrorException {
+        // トークンからgmailを取得
+        String gmail = googleAuthService.getGmailFromGoogleAuthToken(authToken);
+        // ユーザを登録
+        return userAccountService.addAccountUserByGmail(userSettingId, name, gmail);
     }
 
     @QueryMapping

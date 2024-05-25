@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.api.client.googleapis.auth.oauth2.*;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -31,7 +32,7 @@ public class GoogleAuthService {
     @Autowired
     JwtService jwtService;
 
-    // Googleの認証コードからユーザ情報を取得
+    // Googleの認証コードからgoogleのユーザ情報を取得
     public GoogleIdToken.Payload getGoogleAuthPayloadFromAuthCode(String authCode) throws GraphqlErrorException {
 
         try {
@@ -92,6 +93,12 @@ public class GoogleAuthService {
                 12L * 60L * 60L * 1000L,
                 Map.of("gmail", gmail));
 
+    }
+
+    // 登録用のトークンからgmailを取得
+    public String getGmailFromGoogleAuthToken(String token) throws GraphqlErrorException {
+        DecodedJWT decodeResult = jwtService.decodeToken(token);
+        return decodeResult.getClaim("gmail").asString();
     }
 
 }

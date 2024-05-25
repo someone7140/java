@@ -5,7 +5,9 @@ import java.util.Map;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import graphql.GraphqlErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -18,13 +20,12 @@ public class JwtService {
     Environment env;
 
     public String makeJwtToken(long expireMilliSecond, Map<String, String> claimMap) throws GraphqlErrorException {
+        Algorithm algorithm = Algorithm.HMAC256(env.getProperty("jwt.secret"));
+        Date expireTime = new Date();
+        expireTime.setTime(expireTime.getTime() + expireMilliSecond);
         try {
-            Date expireTime = new Date();
-            expireTime.setTime(expireTime.getTime() + expireMilliSecond);
-
-            Algorithm algorithm = Algorithm.HMAC256(env.getProperty("jwt.issuer"));
             JWTCreator.Builder builder = JWT.create()
-                    .withIssuer(env.getProperty("jwt.secret"))
+                    .withIssuer(env.getProperty("jwt.issuer"))
                     .withExpiresAt(expireTime);
             claimMap.forEach((k, v) -> {
                 builder.withClaim(k, v);
@@ -40,4 +41,19 @@ public class JwtService {
         }
     }
 
+    public DecodedJWT decodeToken(String token) throws GraphqlErrorException {
+        Algorithm algorithm = Algorithm.HMAC256(env.getProperty("jwt.secret"));
+        try {
+            JWTVerifier verifier = JWT.require(algorithm)
+                    .withIssuer(env.getProperty("jwt.issuer"))
+                    .build();
+            return verifier.verify(token);
+        } catch (Exception e) {
+            throw GraphqlErrorException
+                    .newErrorException()
+                    .errorClassification(ErrorType.BAD_REQUEST)
+                    .message(e.getMessage())
+                    .build();
+        }
+    }
 }
