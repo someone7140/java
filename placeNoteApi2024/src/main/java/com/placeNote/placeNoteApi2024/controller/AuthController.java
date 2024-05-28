@@ -8,6 +8,9 @@ import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 
+import com.placeNote.placeNoteApi2024.annotation.loginStatus.LoggedInOnly;
+import com.placeNote.placeNoteApi2024.annotation.loginStatus.NotLoggedInOnly;
+import com.placeNote.placeNoteApi2024.model.auth.RequestManager;
 import com.placeNote.placeNoteApi2024.model.graphql.auth.AccountUserResponse;
 import com.placeNote.placeNoteApi2024.model.graphql.auth.GoogleAuthCodeVerifyResponse;
 import com.placeNote.placeNoteApi2024.service.userAccount.GoogleAuthService;
@@ -19,10 +22,13 @@ public class AuthController {
     GoogleAuthService googleAuthService;
     @Autowired
     UserAccountService userAccountService;
+    @Autowired
+    RequestManager requestManager;
 
     @MutationMapping
+    @NotLoggedInOnly
     public GoogleAuthCodeVerifyResponse googleAuthCodeVerify(@Argument String authCode) throws GraphqlErrorException {
-        // 認証コードから認証情報を取得
+        // 認証コードからgoogle認証情報を取得
         GoogleIdToken.Payload googleAuthPayload = googleAuthService.getGoogleAuthPayloadFromAuthCode(authCode);
         // トークンの取得
         String token = googleAuthService.getTokenGoogleAuthForRegister(googleAuthPayload.getEmail());
@@ -30,6 +36,16 @@ public class AuthController {
     }
 
     @MutationMapping
+    @NotLoggedInOnly
+    public AccountUserResponse loginByGoogleAuthCode(@Argument String authCode) throws GraphqlErrorException {
+        // 認証コードからgoogle認証情報を取得
+        GoogleIdToken.Payload googleAuthPayload = googleAuthService.getGoogleAuthPayloadFromAuthCode(authCode);
+        // ユーザ情報を取得
+        return userAccountService.getAccountUserByGmail(googleAuthPayload.getEmail());
+    }
+
+    @MutationMapping
+    @NotLoggedInOnly
     public AccountUserResponse addAccountUserByGoogle(
             @Argument String userSettingId,
             @Argument String name,
@@ -41,7 +57,9 @@ public class AuthController {
     }
 
     @QueryMapping
+    @LoggedInOnly
     public AccountUserResponse getAccountUserByToken() {
-        return new AccountUserResponse("testToken", "testId", "testName");
+        String userAccountId = requestManager.getUserAccountIdSession();
+        return userAccountService.getAccountUserById(userAccountId);
     }
 }

@@ -11,4 +11,5 @@ import com.placeNote.placeNoteApi2024.model.db.UserAccountDocument;
 public interface UserAccountRepository extends MongoRepository<UserAccountDocument, String> {
     public Optional<UserAccountDocument> findByUserSettingIdOrGmail(String userSettingId, String gmail);
     public Optional<UserAccountDocument> findByGmail(String gmail);
+    public Optional<UserAccountDocument> findById(String id);
 }
