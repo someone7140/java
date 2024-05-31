@@ -5,22 +5,21 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.lang.Nullable;
 
-@Document(collection = "user_accounts")
-public record UserAccountDocument(
+@Document(collection = "post_categories")
+public record PostCategoryDocument(
         @Id
         @Field("_id")
         String id,
         String name,
-        @Field("user_setting_id")
-        String userSettingId,
+        @Field("create_user_account_id")
+        String createUserAccountId,
         @Nullable
-        String gmail,
+        @Field("parent_category_id")
+        String parentCategoryId,
         @Nullable
-        String email,
+        @Field("display_order")
+        Integer displayOrder,
         @Nullable
-        String password,
-        @Nullable
-        @Field("image_url")
-        String imageUrl
+        String memo
 ) {
 }

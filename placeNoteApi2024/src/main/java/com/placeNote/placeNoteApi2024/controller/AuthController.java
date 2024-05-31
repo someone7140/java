@@ -58,7 +58,7 @@ public class AuthController {
 
     @QueryMapping
     @LoggedInOnly
-    public AccountUserResponse getAccountUserByToken() {
+    public AccountUserResponse getAccountUserByToken() throws GraphqlErrorException {
         String userAccountId = requestManager.getUserAccountIdSession();
         return userAccountService.getAccountUserById(userAccountId);
     }

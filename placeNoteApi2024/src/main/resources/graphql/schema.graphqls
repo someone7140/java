@@ -1,11 +1,16 @@
 type Query {
     getAccountUserByToken: AccountUserResponse!
+    getMyPostCategories(nameFilter: String): [PostCategoryResponse!]!
+    getMyPostCategoryById(idFilter: String!): PostCategoryResponse!
 }
 
 type Mutation {
     googleAuthCodeVerify(authCode: String!): GoogleAuthCodeVerifyResponse!
     addAccountUserByGoogle(userSettingId: String!, name: String!, authToken: String!): AccountUserResponse!
     loginByGoogleAuthCode(authCode: String!): AccountUserResponse!
+    addPostCategory(name: String!, parentCategoryId: String, displayOrder: Int, memo: String): Boolean!
+    editPostCategory(id: String!, name: String!, parentCategoryId: String, displayOrder: Int, memo: String): Boolean!
+    deletePostCategory(id: String!): Boolean!
 }
 
 type AccountUserResponse {
@@ -18,3 +23,11 @@ type GoogleAuthCodeVerifyResponse {
     token: String!
 }
 
+type PostCategoryResponse {
+    id: String!
+    userSettingId: String!
+    name: String!
+    parentCategoryId: String
+    displayOrder: Int
+    memo: String
+}

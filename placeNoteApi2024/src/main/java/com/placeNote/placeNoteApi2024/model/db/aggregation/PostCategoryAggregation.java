@@ -1,12 +1,12 @@
-package com.placeNote.placeNoteApi2024.model.db;
+package com.placeNote.placeNoteApi2024.model.db.aggregation;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.lang.Nullable;
 
-@Document(collection = "user_accounts")
-public record UserAccountDocument(
+@Document
+public record PostCategoryAggregation(
         @Id
         @Field("_id")
         String id,
@@ -14,13 +14,12 @@ public record UserAccountDocument(
         @Field("user_setting_id")
         String userSettingId,
         @Nullable
-        String gmail,
+        @Field("parent_category_id")
+        String parentCategoryId,
         @Nullable
-        String email,
+        @Field("display_order")
+        Integer displayOrder,
         @Nullable
-        String password,
-        @Nullable
-        @Field("image_url")
-        String imageUrl
+        String memo
 ) {
 }
