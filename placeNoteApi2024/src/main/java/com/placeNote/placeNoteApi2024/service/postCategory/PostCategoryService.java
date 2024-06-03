@@ -1,4 +1,4 @@
-package com.placeNote.placeNoteApi2024.service.userAccount;
+package com.placeNote.placeNoteApi2024.service.postCategory;
 
 import java.util.List;
 import java.util.Optional;

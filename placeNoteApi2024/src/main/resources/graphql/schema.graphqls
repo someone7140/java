@@ -2,6 +2,7 @@ type Query {
     getAccountUserByToken: AccountUserResponse!
     getMyPostCategories(nameFilter: String): [PostCategoryResponse!]!
     getMyPostCategoryById(idFilter: String!): PostCategoryResponse!
+    getLatLonFromAddress(address: String!): LatLonResponse
 }
 
 type Mutation {
@@ -30,4 +31,14 @@ type PostCategoryResponse {
     parentCategoryId: String
     displayOrder: Int
     memo: String
+}
+
+input LatLonInput {
+    lat: Float!
+    lon: Float!
+}
+
+type LatLonResponse {
+    lat: Float!
+    lon: Float!
 }

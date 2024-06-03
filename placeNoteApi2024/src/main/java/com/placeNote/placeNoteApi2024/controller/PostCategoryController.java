@@ -10,7 +10,7 @@ import org.springframework.stereotype.Controller;
 import com.placeNote.placeNoteApi2024.annotation.loginStatus.LoggedInOnly;
 import com.placeNote.placeNoteApi2024.model.auth.RequestManager;
 import com.placeNote.placeNoteApi2024.model.graphql.auth.PostCategoryResponse;
-import com.placeNote.placeNoteApi2024.service.userAccount.PostCategoryService;
+import com.placeNote.placeNoteApi2024.service.postCategory.PostCategoryService;
 
 import java.util.List;
 
