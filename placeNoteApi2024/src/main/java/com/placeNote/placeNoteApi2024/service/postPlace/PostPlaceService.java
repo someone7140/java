@@ -1,7 +1,8 @@
 package com.placeNote.placeNoteApi2024.service.postPlace;
 
 import java.io.StringReader;
-import java.net.URLEncoder;
+import java.util.List;
+import java.util.UUID;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -13,17 +14,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import com.placeNote.placeNoteApi2024.model.db.PostPlaceDocument;
+import com.placeNote.placeNoteApi2024.model.graphql.postPlace.LatLonInput;
 import com.placeNote.placeNoteApi2024.model.graphql.postPlace.LatLonResponse;
-
+import com.placeNote.placeNoteApi2024.repository.PostPlaceRepository;
 
 @Service
 public class PostPlaceService {
+    @Autowired
+    PostPlaceRepository postPlaceRepository;
 
-    // 投稿カテゴリーの追加
+    // 住所から緯度・経度の取得
     public LatLonResponse getLatLonFromGeocodingService(String address) throws GraphqlErrorException {
         RestClient restClient = RestClient.create();
         Element resultElem;
@@ -69,4 +73,28 @@ public class PostPlaceService {
         return null;
     }
 
+    // 場所の追加
+    public Boolean addPostPlace(
+            String userAccountId,
+            String name,
+            String address,
+            LatLonInput latLon,
+            String prefectureCode,
+            List<String> categoryIdList,
+            String detail,
+            List<String> urlList) throws GraphqlErrorException {
+        PostPlaceDocument postPlaceDocument = new PostPlaceDocument(
+                UUID.randomUUID().toString(),
+                name,
+                userAccountId,
+                address,
+                latLon.getLonLatArray(),
+                prefectureCode,
+                categoryIdList,
+                detail,
+                urlList
+        );
+        postPlaceRepository.save(postPlaceDocument);
+        return true;
+    }
 }

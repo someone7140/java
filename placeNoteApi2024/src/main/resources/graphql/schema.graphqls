@@ -12,6 +12,7 @@ type Mutation {
     addPostCategory(name: String!, parentCategoryId: String, displayOrder: Int, memo: String): Boolean!
     editPostCategory(id: String!, name: String!, parentCategoryId: String, displayOrder: Int, memo: String): Boolean!
     deletePostCategory(id: String!): Boolean!
+    addPostPlace(name: String!, address: String, latLon: LatLonInput, prefectureCode: String, categoryIdList: [String!]!, detail: String, urlList: [String!]!): Boolean!
 }
 
 type AccountUserResponse {
