@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Update;
 import org.springframework.stereotype.Repository;
 
 import com.placeNote.placeNoteApi2024.model.db.PostCategoryDocument;
@@ -13,6 +14,7 @@ import com.placeNote.placeNoteApi2024.model.db.aggregation.PostCategoryAggregati
 @Repository
 public interface PostCategoryRepository extends MongoRepository<PostCategoryDocument, String> {
     public Optional<PostCategoryDocument> findByIdAndCreateUserAccountId(String id, String createUserAccountId);
+
     public void deleteByIdAndCreateUserAccountId(String id, String createUserAccountId);
 
     @Aggregation(
@@ -47,4 +49,6 @@ public interface PostCategoryRepository extends MongoRepository<PostCategoryDocu
     )
     public List<PostCategoryAggregation> getCategoryListAggregate(String userAccountId, String idFilter, String nameFilter);
 
+    @Update("{ '$set' : { 'parent_category_id' : null } }")
+    void findAndSetParentCategoryIdNullByCreateUserAccountIdAndParentCategoryId(String createUserAccountId, String parentCategoryId);
 }

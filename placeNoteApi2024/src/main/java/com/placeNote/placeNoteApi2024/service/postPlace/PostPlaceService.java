@@ -97,4 +97,36 @@ public class PostPlaceService {
         postPlaceRepository.save(postPlaceDocument);
         return true;
     }
+
+    // 場所の編集
+    public Boolean editPostPlace(
+            String userAccountId,
+            String id,
+            String name,
+            String address,
+            LatLonInput latLon,
+            String prefectureCode,
+            List<String> categoryIdList,
+            String detail,
+            List<String> urlList) throws GraphqlErrorException {
+        PostPlaceDocument postPlaceDocument = new PostPlaceDocument(
+                id,
+                name,
+                userAccountId,
+                address,
+                latLon.getLonLatArray(),
+                prefectureCode,
+                categoryIdList,
+                detail,
+                urlList
+        );
+        postPlaceRepository.save(postPlaceDocument);
+        return true;
+    }
+
+    // 場所の削除
+    public Boolean deletePostPlace(String userAccountId, String id) throws GraphqlErrorException {
+        postPlaceRepository.deleteByIdAndCreateUserAccountId(id, userAccountId);
+        return true;
+    }
 }

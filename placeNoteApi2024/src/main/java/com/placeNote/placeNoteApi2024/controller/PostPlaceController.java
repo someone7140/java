@@ -50,4 +50,37 @@ public class PostPlaceController {
                 urlList);
         return true;
     }
+
+    @MutationMapping
+    @LoggedInOnly
+    public Boolean editPostPlace(
+            @Argument String id,
+            @Argument String name,
+            @Argument String address,
+            @Argument LatLonInput latLon,
+            @Argument String prefectureCode,
+            @Argument List<String> categoryIdList,
+            @Argument String detail,
+            @Argument List<String> urlList) throws GraphqlErrorException {
+        String userAccountId = requestManager.getUserAccountIdSession();
+        postPlaceService.editPostPlace(
+                userAccountId,
+                id,
+                name,
+                address,
+                latLon,
+                prefectureCode,
+                categoryIdList,
+                detail,
+                urlList);
+        return true;
+    }
+
+    @MutationMapping
+    @LoggedInOnly
+    public Boolean deletePostPlace(@Argument String id) throws GraphqlErrorException {
+        String userAccountId = requestManager.getUserAccountIdSession();
+        postPlaceService.deletePostPlace(userAccountId, id);
+        return true;
+    }
 }

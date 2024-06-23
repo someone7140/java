@@ -14,11 +14,14 @@ import com.placeNote.placeNoteApi2024.model.db.PostCategoryDocument;
 import com.placeNote.placeNoteApi2024.model.db.aggregation.PostCategoryAggregation;
 import com.placeNote.placeNoteApi2024.model.graphql.auth.PostCategoryResponse;
 import com.placeNote.placeNoteApi2024.repository.PostCategoryRepository;
+import com.placeNote.placeNoteApi2024.repository.PostPlaceRepository;
 
 @Service
 public class PostCategoryService {
     @Autowired
     PostCategoryRepository postCategoryRepository;
+    @Autowired
+    PostPlaceRepository postPlaceRepository;
 
     // 投稿カテゴリーの追加
     public Boolean addPostCategory(
@@ -66,6 +69,11 @@ public class PostCategoryService {
 
     // 投稿カテゴリーの削除
     public Boolean deletePostCategory(String id, String userAccountId) throws GraphqlErrorException {
+        // 場所のカテゴリー設定削除
+        postPlaceRepository.findAndPullCategoryIdListByCreateUserAccountIdAndCategoryIdList(userAccountId, id);
+        // 親として設定してあるカテゴリーの親設定削除
+        postCategoryRepository.findAndSetParentCategoryIdNullByCreateUserAccountIdAndParentCategoryId(userAccountId, id);
+        // 自身の削除
         postCategoryRepository.deleteByIdAndCreateUserAccountId(id, userAccountId);
         return true;
     }
