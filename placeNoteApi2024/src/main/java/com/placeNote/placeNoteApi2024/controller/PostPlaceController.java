@@ -13,6 +13,7 @@ import com.placeNote.placeNoteApi2024.annotation.loginStatus.LoggedInOnly;
 import com.placeNote.placeNoteApi2024.model.auth.RequestManager;
 import com.placeNote.placeNoteApi2024.model.graphql.postPlace.LatLonInput;
 import com.placeNote.placeNoteApi2024.model.graphql.postPlace.LatLonResponse;
+import com.placeNote.placeNoteApi2024.model.graphql.postPlace.PostPlaceResponse;
 import com.placeNote.placeNoteApi2024.service.postPlace.PostPlaceService;
 
 @Controller
@@ -82,5 +83,12 @@ public class PostPlaceController {
         String userAccountId = requestManager.getUserAccountIdSession();
         postPlaceService.deletePostPlace(userAccountId, id);
         return true;
+    }
+
+    @QueryMapping
+    @LoggedInOnly
+    public List<PostPlaceResponse> getPostPlaces(@Argument String idFilter, @Argument String categoryFilter) throws GraphqlErrorException {
+        String userAccountId = requestManager.getUserAccountIdSession();
+        return postPlaceService.getPostPlaceList(userAccountId, idFilter, categoryFilter);
     }
 }

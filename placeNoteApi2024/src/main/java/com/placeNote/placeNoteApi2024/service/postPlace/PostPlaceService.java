@@ -1,11 +1,13 @@
 package com.placeNote.placeNoteApi2024.service.postPlace;
 
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import com.placeNote.placeNoteApi2024.model.db.PostCategoryDocument;
 import graphql.GraphqlErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.execution.ErrorType;
@@ -18,12 +20,17 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import com.placeNote.placeNoteApi2024.model.db.PostPlaceDocument;
+import com.placeNote.placeNoteApi2024.model.db.aggregation.PostPlaceAggregation;
 import com.placeNote.placeNoteApi2024.model.graphql.postPlace.LatLonInput;
 import com.placeNote.placeNoteApi2024.model.graphql.postPlace.LatLonResponse;
+import com.placeNote.placeNoteApi2024.model.graphql.postPlace.PostPlaceResponse;
+import com.placeNote.placeNoteApi2024.repository.PostCategoryRepository;
 import com.placeNote.placeNoteApi2024.repository.PostPlaceRepository;
 
 @Service
 public class PostPlaceService {
+    @Autowired
+    PostCategoryRepository postCategoryRepository;
     @Autowired
     PostPlaceRepository postPlaceRepository;
 
@@ -128,5 +135,30 @@ public class PostPlaceService {
     public Boolean deletePostPlace(String userAccountId, String id) throws GraphqlErrorException {
         postPlaceRepository.deleteByIdAndCreateUserAccountId(id, userAccountId);
         return true;
+    }
+
+    // 場所の一覧
+    public List<PostPlaceResponse> getPostPlaceList(String userAccountId, String idFilter, String categoryFilter) throws GraphqlErrorException {
+        List<PostCategoryDocument> categories = new ArrayList<>();
+        if (categoryFilter != null) {
+            // 指定したカテゴリーの子カテゴリーを含めて取得
+            categories = postCategoryRepository.findPostCategoriesWithChildren(userAccountId, categoryFilter);
+        }
+
+        List<PostPlaceAggregation> aggregateResults = postPlaceRepository.getPlaceListAggregate(
+                userAccountId,
+                idFilter == null ? "" : idFilter,
+                categories.stream().map(c -> c.id()).toList());
+        return aggregateResults.stream().map(r -> new PostPlaceResponse(
+                r.id(),
+                r.userSettingId(),
+                r.name(),
+                r.address(),
+                new LatLonResponse(r.lonLat()),
+                r.prefectureCode(),
+                r.categoryIdList(),
+                r.detail(),
+                r.urlList()
+        )).toList();
     }
 }

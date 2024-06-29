@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.Update;
 import org.springframework.stereotype.Repository;
 
@@ -38,7 +39,7 @@ public interface PostCategoryRepository extends MongoRepository<PostCategoryDocu
                             " } }",
                     "{ '$unwind': '$user_accounts' }",
                     "{ '$project': {" +
-                            " '_id': 1, " +
+                            " '_id': '$_id', " +
                             " 'name': 1, " +
                             " 'user_setting_id': '$user_accounts.user_setting_id', " +
                             " 'parent_category_id': 1, " +
@@ -50,5 +51,8 @@ public interface PostCategoryRepository extends MongoRepository<PostCategoryDocu
     public List<PostCategoryAggregation> getCategoryListAggregate(String userAccountId, String idFilter, String nameFilter);
 
     @Update("{ '$set' : { 'parent_category_id' : null } }")
-    void findAndSetParentCategoryIdNullByCreateUserAccountIdAndParentCategoryId(String createUserAccountId, String parentCategoryId);
+    public void findAndSetParentCategoryIdNullByCreateUserAccountIdAndParentCategoryId(String createUserAccountId, String parentCategoryId);
+
+    @Query("{ 'create_user_account_id' : ?0, '$or': [ { _id: ?1 }, { parent_category_id: ?1 } ] }")
+    public List<PostCategoryDocument> findPostCategoriesWithChildren(String createUserAccountId, String category_id);
 }

@@ -1,4 +1,4 @@
-package com.placeNote.placeNoteApi2024.model.graphql.auth;
+package com.placeNote.placeNoteApi2024.model.graphql.postCategory;
 
 public record PostCategoryResponse(
         String id,

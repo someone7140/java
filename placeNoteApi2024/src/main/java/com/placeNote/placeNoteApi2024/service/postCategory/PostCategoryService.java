@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.placeNote.placeNoteApi2024.model.db.PostCategoryDocument;
 import com.placeNote.placeNoteApi2024.model.db.aggregation.PostCategoryAggregation;
-import com.placeNote.placeNoteApi2024.model.graphql.auth.PostCategoryResponse;
+import com.placeNote.placeNoteApi2024.model.graphql.postCategory.PostCategoryResponse;
 import com.placeNote.placeNoteApi2024.repository.PostCategoryRepository;
 import com.placeNote.placeNoteApi2024.repository.PostPlaceRepository;
 
