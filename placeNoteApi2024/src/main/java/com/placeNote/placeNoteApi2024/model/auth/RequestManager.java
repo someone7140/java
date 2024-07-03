@@ -15,6 +15,7 @@ public class RequestManager {
 
     private final String LOGIN_USER_ID_SESSION = "userAccountId";
 
+    // Authorizationヘッダーからトークンをdecodeして保存する処理
     public void saveUserAccountIdSession(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
         // Authorizationヘッダーが設定されているか判定
@@ -30,6 +31,7 @@ public class RequestManager {
         }
     }
 
+    // ContextHolderからユーザ情報を取得する処理
     public String getUserAccountIdSession() {
         Object session = RequestContextHolder
                 .getRequestAttributes().getAttribute(LOGIN_USER_ID_SESSION, RequestAttributes.SCOPE_REQUEST);
