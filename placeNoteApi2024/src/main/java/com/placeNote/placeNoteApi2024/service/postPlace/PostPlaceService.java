@@ -7,7 +7,6 @@ import java.util.UUID;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import com.placeNote.placeNoteApi2024.model.db.PostCategoryDocument;
 import graphql.GraphqlErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.execution.ErrorType;
@@ -19,6 +18,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import com.placeNote.placeNoteApi2024.model.db.PostCategoryDocument;
 import com.placeNote.placeNoteApi2024.model.db.PostPlaceDocument;
 import com.placeNote.placeNoteApi2024.model.db.aggregation.PostPlaceAggregation;
 import com.placeNote.placeNoteApi2024.model.graphql.postPlace.LatLonInput;
@@ -95,7 +95,7 @@ public class PostPlaceService {
                 name,
                 userAccountId,
                 address,
-                latLon.getLonLatArray(),
+                latLon != null ? latLon.getLonLatArray() : null,
                 prefectureCode,
                 categoryIdList,
                 detail,
@@ -121,7 +121,7 @@ public class PostPlaceService {
                 name,
                 userAccountId,
                 address,
-                latLon.getLonLatArray(),
+                latLon != null ? latLon.getLonLatArray() : null,
                 prefectureCode,
                 categoryIdList,
                 detail,
@@ -154,7 +154,7 @@ public class PostPlaceService {
                 r.userSettingId(),
                 r.name(),
                 r.address(),
-                new LatLonResponse(r.lonLat()),
+                r.lonLat() != null ? new LatLonResponse(r.lonLat()) : null,
                 r.prefectureCode(),
                 r.categoryIdList(),
                 r.detail(),
