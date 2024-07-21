@@ -3,7 +3,7 @@ type Query {
     getMyPostCategories(nameFilter: String): [PostCategoryResponse!]!
     getMyPostCategoryById(idFilter: String!): PostCategoryResponse!
     getLatLonFromAddress(address: String!): LatLonResponse
-    getPostPlaces(idFilter: String, categoryFilter: String): [PostPlaceResponse!]!
+    getPostPlaces(idFilter: String, categoryFilter: String, nameFilter: String): [PostPlaceResponse!]!
 }
 
 type Mutation {
@@ -16,6 +16,7 @@ type Mutation {
     addPostPlace(name: String!, address: String, latLon: LatLonInput, prefectureCode: String, categoryIdList: [String!]!, detail: String, urlList: [String!]!): Boolean!
     editPostPlace(id: String!, name: String!, address: String, latLon: LatLonInput, prefectureCode: String, categoryIdList: [String!]!, detail: String, urlList: [String!]!): Boolean!
     deletePostPlace(id: String!): Boolean!
+    addPost(title: String!, placeId: String!, isOpen: Boolean, categoryIdList: [String!]!, detail: String, urlList: [String!]!): Boolean!
 }
 
 type AccountUserResponse {

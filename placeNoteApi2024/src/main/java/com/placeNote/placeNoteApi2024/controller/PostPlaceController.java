@@ -87,8 +87,8 @@ public class PostPlaceController {
 
     @QueryMapping
     @LoggedInOnly
-    public List<PostPlaceResponse> getPostPlaces(@Argument String idFilter, @Argument String categoryFilter) throws GraphqlErrorException {
+    public List<PostPlaceResponse> getPostPlaces(@Argument String idFilter, @Argument String categoryFilter, @Argument String nameFilter) throws GraphqlErrorException {
         String userAccountId = requestManager.getUserAccountIdSession();
-        return postPlaceService.getPostPlaceList(userAccountId, idFilter, categoryFilter);
+        return postPlaceService.getPostPlaceList(userAccountId, idFilter, categoryFilter, nameFilter);
     }
 }

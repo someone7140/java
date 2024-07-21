@@ -60,10 +60,16 @@ public class PostCategoryService {
                     .build();
         }
 
+        // カテゴリーの更新
         PostCategoryDocument postCategoryDocument = new PostCategoryDocument(
                 id, name, userAccountId, parentCategoryId, displayOrder, memo
         );
         postCategoryRepository.save(postCategoryDocument);
+        // 親カテゴリーが更新された場合、設定済みの子カテゴリーも新しい親カテゴリーにする
+        postCategoryRepository.findAndSetParentCategoryIdByCreateUserAccountIdAndParentCategoryId(
+                userAccountId, id, parentCategoryId
+        );
+
         return true;
     }
 

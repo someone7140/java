@@ -28,6 +28,10 @@ public interface PostPlaceRepository extends MongoRepository<PostPlaceDocument, 
                             " { '$expr': { '$eq': [?2, []] } }, " +
                             " { 'category_id_list': { '$elemMatch': { '$in': ?2 } } }" +
                             "] } }",
+                    "{ '$match': { '$or': [ " +
+                            " { '$expr': { '$eq': [?3, ''] } }, " +
+                            " { 'name': { '$regex': ?3, '$options': 'i' } }" +
+                            "] } }",
                     "{ '$sort': { 'name': 1 } }",
                     "{ '$lookup': {" +
                             " 'from': 'user_accounts', " +
@@ -49,6 +53,10 @@ public interface PostPlaceRepository extends MongoRepository<PostPlaceDocument, 
                             " } }",
             }
     )
-    public List<PostPlaceAggregation> getPlaceListAggregate(String userAccountId, String idFilter, List categoriesFilter);
+    public List<PostPlaceAggregation> getPlaceListAggregate(
+            String userAccountId,
+            String idFilter,
+            List categoriesFilter,
+            String nameFilter);
 
 }

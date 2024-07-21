@@ -24,6 +24,7 @@ import com.placeNote.placeNoteApi2024.model.db.aggregation.PostPlaceAggregation;
 import com.placeNote.placeNoteApi2024.model.graphql.postPlace.LatLonInput;
 import com.placeNote.placeNoteApi2024.model.graphql.postPlace.LatLonResponse;
 import com.placeNote.placeNoteApi2024.model.graphql.postPlace.PostPlaceResponse;
+import com.placeNote.placeNoteApi2024.repository.PostRepository;
 import com.placeNote.placeNoteApi2024.repository.PostCategoryRepository;
 import com.placeNote.placeNoteApi2024.repository.PostPlaceRepository;
 
@@ -33,6 +34,8 @@ public class PostPlaceService {
     PostCategoryRepository postCategoryRepository;
     @Autowired
     PostPlaceRepository postPlaceRepository;
+    @Autowired
+    PostRepository postRepository;
 
     // 住所から緯度・経度の取得
     public LatLonResponse getLatLonFromGeocodingService(String address) throws GraphqlErrorException {
@@ -133,12 +136,15 @@ public class PostPlaceService {
 
     // 場所の削除
     public Boolean deletePostPlace(String userAccountId, String id) throws GraphqlErrorException {
+        // 該当の場所の配下の投稿を削除
+        postRepository.deleteByCreateUserAccountIdAndPlaceId(userAccountId, id);
+        // 場所の削除
         postPlaceRepository.deleteByIdAndCreateUserAccountId(id, userAccountId);
         return true;
     }
 
     // 場所の一覧
-    public List<PostPlaceResponse> getPostPlaceList(String userAccountId, String idFilter, String categoryFilter) throws GraphqlErrorException {
+    public List<PostPlaceResponse> getPostPlaceList(String userAccountId, String idFilter, String categoryFilter, String nameFilter) throws GraphqlErrorException {
         List<PostCategoryDocument> categories = new ArrayList<>();
         if (categoryFilter != null) {
             // 指定したカテゴリーの子カテゴリーを含めて取得
@@ -148,7 +154,8 @@ public class PostPlaceService {
         List<PostPlaceAggregation> aggregateResults = postPlaceRepository.getPlaceListAggregate(
                 userAccountId,
                 idFilter == null ? "" : idFilter,
-                categories.stream().map(c -> c.id()).toList());
+                categories.stream().map(c -> c.id()).toList(),
+                nameFilter);
         return aggregateResults.stream().map(r -> new PostPlaceResponse(
                 r.id(),
                 r.userSettingId(),
