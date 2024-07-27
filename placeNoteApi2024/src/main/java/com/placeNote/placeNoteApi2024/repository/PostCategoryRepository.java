@@ -53,7 +53,7 @@ public interface PostCategoryRepository extends MongoRepository<PostCategoryDocu
     @Update("{ '$set' : { 'parent_category_id' : null } }")
     public void findAndSetParentCategoryIdNullByCreateUserAccountIdAndParentCategoryId(String createUserAccountId, String parentCategoryId);
 
-    @Update("{ '$set' : { 'parent_category_id' : ?3 } }")
+    @Update("{ '$set' : { 'parent_category_id' : ?2 } }")
     public void findAndSetParentCategoryIdByCreateUserAccountIdAndParentCategoryId(
             String createUserAccountId,
             String parentCategoryId,

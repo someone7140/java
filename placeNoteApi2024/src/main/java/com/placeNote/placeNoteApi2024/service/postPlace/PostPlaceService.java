@@ -155,7 +155,7 @@ public class PostPlaceService {
                 userAccountId,
                 idFilter == null ? "" : idFilter,
                 categories.stream().map(c -> c.id()).toList(),
-                nameFilter);
+                nameFilter == null ? "" : nameFilter);
         return aggregateResults.stream().map(r -> new PostPlaceResponse(
                 r.id(),
                 r.userSettingId(),
