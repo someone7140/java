@@ -1,22 +1,69 @@
+scalar DateTime
+@specifiedBy(url: "https://scalars.graphql.org/andimarek/date-time.html")
+
 type Query {
     getAccountUserByToken: AccountUserResponse!
     getMyPostCategories(nameFilter: String): [PostCategoryResponse!]!
     getMyPostCategoryById(idFilter: String!): PostCategoryResponse!
     getLatLonFromAddress(address: String!): LatLonResponse
-    getPostPlaces(idFilter: String, categoryFilter: String, nameFilter: String): [PostPlaceResponse!]!
+    getPostPlaces(
+        idFilter: String
+        categoryFilter: String
+        nameFilter: String
+    ): [PostPlaceResponse!]!
 }
 
 type Mutation {
     googleAuthCodeVerify(authCode: String!): GoogleAuthCodeVerifyResponse!
-    addAccountUserByGoogle(userSettingId: String!, name: String!, authToken: String!): AccountUserResponse!
+    addAccountUserByGoogle(
+        userSettingId: String!
+        name: String!
+        authToken: String!
+    ): AccountUserResponse!
     loginByGoogleAuthCode(authCode: String!): AccountUserResponse!
-    addPostCategory(name: String!, parentCategoryId: String, displayOrder: Int, memo: String): Boolean!
-    editPostCategory(id: String!, name: String!, parentCategoryId: String, displayOrder: Int, memo: String): Boolean!
+    addPostCategory(
+        name: String!
+        parentCategoryId: String
+        displayOrder: Int
+        memo: String
+    ): Boolean!
+    editPostCategory(
+        id: String!
+        name: String!
+        parentCategoryId: String
+        displayOrder: Int
+        memo: String
+    ): Boolean!
     deletePostCategory(id: String!): Boolean!
-    addPostPlace(name: String!, address: String, latLon: LatLonInput, prefectureCode: String, categoryIdList: [String!]!, detail: String, urlList: [String!]!): Boolean!
-    editPostPlace(id: String!, name: String!, address: String, latLon: LatLonInput, prefectureCode: String, categoryIdList: [String!]!, detail: String, urlList: [String!]!): Boolean!
+    addPostPlace(
+        name: String!
+        address: String
+        latLon: LatLonInput
+        prefectureCode: String
+        categoryIdList: [String!]!
+        detail: String
+        urlList: [String!]!
+    ): Boolean!
+    editPostPlace(
+        id: String!
+        name: String!
+        address: String
+        latLon: LatLonInput
+        prefectureCode: String
+        categoryIdList: [String!]!
+        detail: String
+        urlList: [String!]!
+    ): Boolean!
     deletePostPlace(id: String!): Boolean!
-    addPost(title: String!, placeId: String!, isOpen: Boolean, categoryIdList: [String!]!, detail: String, urlList: [String!]!): Boolean!
+    addPost(
+        title: String!
+        placeId: String!
+        visitedDate: DateTime!
+        isOpen: Boolean!
+        categoryIdList: [String!]!
+        detail: String
+        urlList: [String!]!
+    ): String!
 }
 
 type AccountUserResponse {

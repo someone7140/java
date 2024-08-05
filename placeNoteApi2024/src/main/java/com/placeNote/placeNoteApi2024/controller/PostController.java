@@ -1,5 +1,6 @@
 package com.placeNote.placeNoteApi2024.controller;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 import graphql.GraphqlErrorException;
@@ -21,23 +22,24 @@ public class PostController {
 
     @MutationMapping
     @LoggedInOnly
-    public Boolean addPost(
+    public String addPost(
             @Argument String title,
             @Argument String placeId,
+            @Argument OffsetDateTime visitedDate,
             @Argument Boolean isOpen,
             @Argument List<String> categoryIdList,
             @Argument String detail,
             @Argument List<String> urlList) throws GraphqlErrorException {
         String userAccountId = requestManager.getUserAccountIdSession();
-        postService.addPost(
+        return postService.addPost(
                 userAccountId,
                 title,
                 placeId,
+                visitedDate,
                 isOpen,
                 categoryIdList,
                 detail,
                 urlList);
-        return true;
     }
 
 }
