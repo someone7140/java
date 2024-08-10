@@ -1,7 +1,5 @@
 package com.placeNote.placeNoteApi2024.model.domain;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.placeNote.placeNoteApi2024.constants.UrlTypeEnum;
 import com.placeNote.placeNoteApi2024.service.common.UrlService;
 
@@ -14,8 +12,6 @@ public record ExternalUrl(
         String imageUrl,
         String siteName
 ) {
-    @Autowired
-    static UrlService urlService;
     static Map<String, UrlTypeEnum> urlDomainTypeMap = Map.of(
             "x.com", UrlTypeEnum.X,
             "twitter.com", UrlTypeEnum.X,
@@ -24,6 +20,7 @@ public record ExternalUrl(
     );
 
     public static ExternalUrl makeExternalUrlObjectFromUrl(String url) {
+        var urlService = new UrlService();
         // ドメインからURLの種別を特定
         var domain = urlService.getDomainFromUrl(url);
         var urlType = urlDomainTypeMap.getOrDefault(domain, UrlTypeEnum.WebNoInfo);

@@ -22,7 +22,7 @@ public class PostController {
 
     @MutationMapping
     @LoggedInOnly
-    public String addPost(
+    public Boolean addPost(
             @Argument String title,
             @Argument String placeId,
             @Argument OffsetDateTime visitedDate,

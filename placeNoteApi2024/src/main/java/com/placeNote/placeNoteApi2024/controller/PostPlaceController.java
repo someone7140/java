@@ -31,16 +31,16 @@ public class PostPlaceController {
 
     @MutationMapping
     @LoggedInOnly
-    public Boolean addPostPlace(
+    public String addPostPlace(
             @Argument String name,
             @Argument String address,
             @Argument LatLonInput latLon,
             @Argument String prefectureCode,
             @Argument List<String> categoryIdList,
             @Argument String detail,
-            @Argument List<String> urlList) throws GraphqlErrorException {
+            @Argument String url) throws GraphqlErrorException {
         String userAccountId = requestManager.getUserAccountIdSession();
-        postPlaceService.addPostPlace(
+        return postPlaceService.addPostPlace(
                 userAccountId,
                 name,
                 address,
@@ -48,8 +48,7 @@ public class PostPlaceController {
                 prefectureCode,
                 categoryIdList,
                 detail,
-                urlList);
-        return true;
+                url);
     }
 
     @MutationMapping
@@ -62,7 +61,7 @@ public class PostPlaceController {
             @Argument String prefectureCode,
             @Argument List<String> categoryIdList,
             @Argument String detail,
-            @Argument List<String> urlList) throws GraphqlErrorException {
+            @Argument String url) throws GraphqlErrorException {
         String userAccountId = requestManager.getUserAccountIdSession();
         postPlaceService.editPostPlace(
                 userAccountId,
@@ -73,7 +72,7 @@ public class PostPlaceController {
                 prefectureCode,
                 categoryIdList,
                 detail,
-                urlList);
+                url);
         return true;
     }
 

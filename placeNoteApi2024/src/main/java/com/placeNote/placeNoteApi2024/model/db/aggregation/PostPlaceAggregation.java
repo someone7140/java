@@ -29,7 +29,8 @@ public record PostPlaceAggregation(
         @Nullable
         @Field("detail")
         String detail,
-        @Field("url_list")
-        List<String> urlList
+        @Nullable
+        @Field("url")
+        String url
 ) {
 }

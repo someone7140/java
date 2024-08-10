@@ -11,6 +11,6 @@ public record PostPlaceResponse(
         String prefectureCode,
         List<String> categoryIdList,
         String detail,
-        List<String> urlList
+        String url
 ) {
 }

@@ -84,7 +84,7 @@ public class PostPlaceService {
     }
 
     // 場所の追加
-    public Boolean addPostPlace(
+    public String addPostPlace(
             String userAccountId,
             String name,
             String address,
@@ -92,7 +92,7 @@ public class PostPlaceService {
             String prefectureCode,
             List<String> categoryIdList,
             String detail,
-            List<String> urlList) throws GraphqlErrorException {
+            String url) throws GraphqlErrorException {
         PostPlaceDocument postPlaceDocument = new PostPlaceDocument(
                 UUID.randomUUID().toString(),
                 name,
@@ -102,10 +102,10 @@ public class PostPlaceService {
                 prefectureCode,
                 categoryIdList,
                 detail,
-                urlList
+                url
         );
         postPlaceRepository.save(postPlaceDocument);
-        return true;
+        return postPlaceDocument.id();
     }
 
     // 場所の編集
@@ -118,7 +118,7 @@ public class PostPlaceService {
             String prefectureCode,
             List<String> categoryIdList,
             String detail,
-            List<String> urlList) throws GraphqlErrorException {
+            String url) throws GraphqlErrorException {
         PostPlaceDocument postPlaceDocument = new PostPlaceDocument(
                 id,
                 name,
@@ -128,7 +128,7 @@ public class PostPlaceService {
                 prefectureCode,
                 categoryIdList,
                 detail,
-                urlList
+                url
         );
         postPlaceRepository.save(postPlaceDocument);
         return true;
@@ -165,7 +165,7 @@ public class PostPlaceService {
                 r.prefectureCode(),
                 r.categoryIdList(),
                 r.detail(),
-                r.urlList()
+                r.url()
         )).toList();
     }
 }

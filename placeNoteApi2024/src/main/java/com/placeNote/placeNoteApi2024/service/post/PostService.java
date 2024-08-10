@@ -2,6 +2,7 @@ package com.placeNote.placeNoteApi2024.service.post;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,7 +23,7 @@ public class PostService {
     PostRepository postRepository;
 
     // 投稿の追加
-    public String addPost(
+    public Boolean addPost(
             String userAccountId,
             String title,
             String placeId,
@@ -37,14 +38,14 @@ public class PostService {
                 title,
                 userAccountId,
                 placeId,
-                visitedDate,
+                new Date(visitedDate.toInstant().toEpochMilli()),
                 isOpen,
                 categoryIdList,
                 detail,
                 getUrlDocumentList(urlList)
         );
         postRepository.save(postDocument);
-        return postDocument.id();
+        return true;
     }
 
     private List<UrlDocument> getUrlDocumentList(List<String> urlList) {

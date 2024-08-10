@@ -1,6 +1,7 @@
 package com.placeNote.placeNoteApi2024.model.db;
 
 import java.time.OffsetDateTime;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
@@ -21,7 +22,7 @@ public record PostDocument(
         @Field("place_id")
         String placeId,
         @Field("visited_date")
-        OffsetDateTime visitedDate,
+        Date visitedDate,
         @Field("is_open")
         Boolean isOpen,
         @Field("category_id_list")
