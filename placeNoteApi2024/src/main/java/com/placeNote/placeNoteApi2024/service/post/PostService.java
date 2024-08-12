@@ -91,6 +91,7 @@ public class PostService {
                     p.title(),
                     p.placeId(),
                     p.placeName(),
+                    p.placeUrl(),
                     p.visitedDate().toInstant().atOffset(ZoneOffset.ofHours(9)),
                     p.isOpen(),
                     p.categoryIdList(),

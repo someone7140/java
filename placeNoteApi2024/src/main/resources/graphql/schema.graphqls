@@ -135,6 +135,7 @@ type PostResponse {
     title: String!
     placeId: String!
     placeName: String!
+    placeUrl: String
     visitedDate: DateTime!
     isOpen: Boolean!
     categoryIdList: [String!]!

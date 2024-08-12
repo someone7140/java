@@ -22,6 +22,8 @@ public record PostAggregation(
         String placeId,
         @Field("place_name")
         String placeName,
+        @Field("place_url")
+        String placeUrl,
         @Field("visited_date")
         Date visitedDate,
         @Field("is_open")

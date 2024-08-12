@@ -9,6 +9,7 @@ public record PostResponse(
         String title,
         String placeId,
         String placeName,
+        String placeUrl,
         OffsetDateTime visitedDate,
         Boolean isOpen,
         List<String> categoryIdList,
