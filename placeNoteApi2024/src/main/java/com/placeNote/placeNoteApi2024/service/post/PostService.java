@@ -1,20 +1,24 @@
 package com.placeNote.placeNoteApi2024.service.post;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import com.placeNote.placeNoteApi2024.constants.UrlTypeEnum;
-import com.placeNote.placeNoteApi2024.model.db.subDocument.post.UrlDocument;
-import com.placeNote.placeNoteApi2024.model.db.subDocument.post.UrlInfoDocument;
-import com.placeNote.placeNoteApi2024.model.domain.ExternalUrl;
 import graphql.GraphqlErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.placeNote.placeNoteApi2024.constants.UrlTypeEnum;
+import com.placeNote.placeNoteApi2024.model.db.subDocument.post.UrlDocument;
+import com.placeNote.placeNoteApi2024.model.db.subDocument.post.UrlInfoDocument;
 import com.placeNote.placeNoteApi2024.model.db.PostDocument;
+import com.placeNote.placeNoteApi2024.model.domain.ExternalUrl;
+import com.placeNote.placeNoteApi2024.model.graphql.post.PostResponse;
+import com.placeNote.placeNoteApi2024.model.graphql.post.UrlDetailResponse;
+import com.placeNote.placeNoteApi2024.model.graphql.post.UrlInfoResponse;
 import com.placeNote.placeNoteApi2024.repository.PostRepository;
 
 @Service
@@ -63,5 +67,36 @@ public class PostService {
             );
         }
         return urlDocumentList;
+    }
+
+    // 投稿一覧取得
+    public List<PostResponse> getPostList(
+            String idFilter, String userAccountId) throws GraphqlErrorException {
+        return postRepository.getPlaceAggregate(userAccountId, idFilter != null ? idFilter : "", 150).stream().map(p -> {
+            var urlList = p.urlList().stream().map(u -> {
+                        var urlInfo = u.urlInfo() != null ? new UrlInfoResponse(
+                                u.urlInfo().title(),
+                                u.urlInfo().imageUrl(),
+                                u.urlInfo().siteName()
+                        ) : null;
+                        return new UrlDetailResponse(
+                                u.urlId(), u.url(), u.urlType(), urlInfo
+                        );
+                    }
+            ).toList();
+
+            return new PostResponse(
+                    p.id(),
+                    p.userSettingId(),
+                    p.title(),
+                    p.placeId(),
+                    p.placeName(),
+                    p.visitedDate().toInstant().atOffset(ZoneOffset.ofHours(9)),
+                    p.isOpen(),
+                    p.categoryIdList(),
+                    p.detail(),
+                    urlList
+            );
+        }).toList();
     }
 }

@@ -11,6 +11,7 @@ type Query {
         categoryFilter: String
         nameFilter: String
     ): [PostPlaceResponse!]!
+    getMyPosts(idFilter: String): [PostResponse!]!
 }
 
 type Mutation {
@@ -105,4 +106,38 @@ type PostPlaceResponse {
     categoryIdList: [String!]!
     detail: String
     url: String
+}
+
+enum UrlTypeEnum {
+    X
+    Instagram
+    Threads
+    WebWithInfo
+    WebNoInfo
+}
+
+type UrlInfo {
+    title: String
+    imageUrl: String
+    siteName: String
+}
+
+type UrlDetail {
+    urlId: String!
+    url: String!
+    urlType: UrlTypeEnum!
+    urlInfo: UrlInfo
+}
+
+type PostResponse {
+    id: String!
+    userSettingId: String!
+    title: String!
+    placeId: String!
+    placeName: String!
+    visitedDate: DateTime!
+    isOpen: Boolean!
+    categoryIdList: [String!]!
+    detail: String
+    urlList: [UrlDetail!]!
 }

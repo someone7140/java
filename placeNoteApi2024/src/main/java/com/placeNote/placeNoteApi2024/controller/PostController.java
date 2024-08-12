@@ -7,10 +7,12 @@ import graphql.GraphqlErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
+import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 
 import com.placeNote.placeNoteApi2024.annotation.loginStatus.LoggedInOnly;
 import com.placeNote.placeNoteApi2024.model.auth.RequestManager;
+import com.placeNote.placeNoteApi2024.model.graphql.post.PostResponse;
 import com.placeNote.placeNoteApi2024.service.post.PostService;
 
 @Controller
@@ -42,4 +44,10 @@ public class PostController {
                 urlList);
     }
 
+    @QueryMapping
+    @LoggedInOnly
+    public List<PostResponse> getMyPosts(@Argument String idFilter) throws GraphqlErrorException {
+        String userAccountId = requestManager.getUserAccountIdSession();
+        return postService.getPostList(idFilter != null ? idFilter : null, userAccountId);
+    }
 }
