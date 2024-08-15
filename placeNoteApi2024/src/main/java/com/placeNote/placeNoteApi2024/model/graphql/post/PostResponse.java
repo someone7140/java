@@ -10,6 +10,7 @@ public record PostResponse(
         String placeId,
         String placeName,
         String placeUrl,
+        String placePrefectureCode,
         OffsetDateTime visitedDate,
         Boolean isOpen,
         List<String> categoryIdList,

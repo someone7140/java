@@ -92,6 +92,7 @@ public class PostService {
                     p.placeId(),
                     p.placeName(),
                     p.placeUrl(),
+                    p.placePrefectureCode(),
                     p.visitedDate().toInstant().atOffset(ZoneOffset.ofHours(9)),
                     p.isOpen(),
                     p.categoryIdList(),

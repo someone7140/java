@@ -46,6 +46,7 @@ public interface PostRepository extends MongoRepository<PostDocument, String> {
                             " 'place_id': 1, " +
                             " 'place_name': '$post_places.name', " +
                             " 'place_url': '$post_places.url', " +
+                            " 'place_prefecture_code': '$post_places.prefecture_code', " +
                             " 'visited_date': 1, " +
                             " 'is_open': 1, " +
                             " 'category_id_list': 1, " +
