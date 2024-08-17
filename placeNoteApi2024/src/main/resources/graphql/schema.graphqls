@@ -137,7 +137,7 @@ type PostResponse {
     placeName: String!
     placeUrl: String
     placePrefectureCode: String
-    visitedDate: DateTime!
+    visitedDate: String!
     isOpen: Boolean!
     categoryIdList: [String!]!
     detail: String
