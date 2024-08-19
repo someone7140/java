@@ -27,13 +27,16 @@ public record ExternalUrl(
         if (urlType.equals(UrlTypeEnum.WebNoInfo)) {
             var ogpMap = urlService.getOgpElements(url);
             if (ogpMap != null) {
-                // OGPが取得できた場合はWebWithInfoで返す
-                return new ExternalUrl(
-                        url,
-                        UrlTypeEnum.WebWithInfo,
-                        ogpMap.getOrDefault("og:title", null),
-                        ogpMap.getOrDefault("og:image", null),
-                        ogpMap.getOrDefault("og:site_name", null));
+                // OGPでタイトルが取得できた場合はWebWithInfoで返す
+                var title = ogpMap.getOrDefault("og:title", null);
+                if (title != null) {
+                    return new ExternalUrl(
+                            url,
+                            UrlTypeEnum.WebWithInfo,
+                            ogpMap.getOrDefault("og:title", null),
+                            ogpMap.getOrDefault("og:image", null),
+                            ogpMap.getOrDefault("og:site_name", null));
+                }
             }
         }
         // WebWithInfo以外はurlとurlTypeだけ設定して返す

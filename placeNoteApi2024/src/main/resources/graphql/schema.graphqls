@@ -117,7 +117,7 @@ enum UrlTypeEnum {
 }
 
 type UrlInfo {
-    title: String
+    title: String!
     imageUrl: String
     siteName: String
 }
