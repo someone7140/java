@@ -13,6 +13,8 @@ public record UrlDocument(
         UrlTypeEnum urlType,
         @Nullable
         @Field("url_info")
-        UrlInfoDocument urlInfo
+        UrlInfoDocument urlInfo,
+        @Field("embed_html")
+        String embedHtml
 ) {
 }

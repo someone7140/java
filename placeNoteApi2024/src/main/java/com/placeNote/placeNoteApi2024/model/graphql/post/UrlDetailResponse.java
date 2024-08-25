@@ -6,6 +6,7 @@ public record UrlDetailResponse(
         String urlId,
         String url,
         UrlTypeEnum urlType,
-        UrlInfoResponse urlInfo
+        UrlInfoResponse urlInfo,
+        String embedHtml
 ) {
 }

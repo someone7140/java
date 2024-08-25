@@ -2,6 +2,9 @@ package com.placeNote.placeNoteApi2024.model.domain;
 
 import com.placeNote.placeNoteApi2024.constants.UrlTypeEnum;
 import com.placeNote.placeNoteApi2024.service.common.UrlService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
 
@@ -10,7 +13,8 @@ public record ExternalUrl(
         UrlTypeEnum urlType,
         String title,
         String imageUrl,
-        String siteName
+        String siteName,
+        String embedHtml
 ) {
     static Map<String, UrlTypeEnum> urlDomainTypeMap = Map.of(
             "x.com", UrlTypeEnum.X,
@@ -24,7 +28,11 @@ public record ExternalUrl(
         // ドメインからURLの種別を特定
         var domain = urlService.getDomainFromUrl(url);
         var urlType = urlDomainTypeMap.getOrDefault(domain, UrlTypeEnum.WebNoInfo);
-        if (urlType.equals(UrlTypeEnum.WebNoInfo)) {
+
+        if (urlType.equals(UrlTypeEnum.X)) {
+            var embedHtml = urlService.getXEmbedHtml(url);
+            return new ExternalUrl(url, urlType, null, null, null, embedHtml);
+        } else if (urlType.equals(UrlTypeEnum.WebNoInfo)) {
             var ogpMap = urlService.getOgpElements(url);
             if (ogpMap != null) {
                 // OGPでタイトルが取得できた場合はWebWithInfoで返す
@@ -35,11 +43,12 @@ public record ExternalUrl(
                             UrlTypeEnum.WebWithInfo,
                             ogpMap.getOrDefault("og:title", null),
                             ogpMap.getOrDefault("og:image", null),
-                            ogpMap.getOrDefault("og:site_name", null));
+                            ogpMap.getOrDefault("og:site_name", null),
+                            null);
                 }
             }
         }
-        // WebWithInfo以外はurlとurlTypeだけ設定して返す
-        return new ExternalUrl(url, urlType, null, null, null);
+        // WebNoInfoの場合はurlとurlTypeだけ設定して返す
+        return new ExternalUrl(url, urlType, null, null, null, null);
     }
 }

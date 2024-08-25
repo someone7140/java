@@ -127,6 +127,7 @@ type UrlDetail {
     url: String!
     urlType: UrlTypeEnum!
     urlInfo: UrlInfo
+    embedHtml: String
 }
 
 type PostResponse {

@@ -60,10 +60,18 @@ public class PostService {
             UrlInfoDocument urlInfo = null;
 
             if (externalUrlModel.urlType().equals(UrlTypeEnum.WebWithInfo)) {
-                urlInfo = new UrlInfoDocument(externalUrlModel.title(), externalUrlModel.imageUrl(), externalUrlModel.siteName());
+                urlInfo = new UrlInfoDocument(
+                        externalUrlModel.title(),
+                        externalUrlModel.imageUrl(),
+                        externalUrlModel.siteName());
             }
             urlDocumentList.add(
-                    new UrlDocument(urlId, externalUrlModel.url(), externalUrlModel.urlType(), urlInfo)
+                    new UrlDocument(
+                            urlId,
+                            externalUrlModel.url(),
+                            externalUrlModel.urlType(),
+                            urlInfo,
+                            externalUrlModel.embedHtml())
             );
         }
         return urlDocumentList;
@@ -80,7 +88,7 @@ public class PostService {
                                 u.urlInfo().siteName()
                         ) : null;
                         return new UrlDetailResponse(
-                                u.urlId(), u.url(), u.urlType(), urlInfo
+                                u.urlId(), u.url(), u.urlType(), urlInfo, u.embedHtml()
                         );
                     }
             ).toList();

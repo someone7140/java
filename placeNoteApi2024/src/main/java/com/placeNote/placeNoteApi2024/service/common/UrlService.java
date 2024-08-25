@@ -5,9 +5,11 @@ import java.util.HashMap;
 
 import org.jsoup.Jsoup;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class UrlService {
+
     public String getDomainFromUrl(String urlStr) {
         try {
             var url = URI.create(urlStr).toURL();
@@ -31,4 +33,14 @@ public class UrlService {
             return null;
         }
     }
+
+    public String getXEmbedHtml(String url) {
+        var xUrl = "https://publish.twitter.com/oembed?url=%s".formatted(url);
+        var restTemplate = new RestTemplate();
+        var result = restTemplate.getForObject(xUrl, XEmbedResponse.class);
+        return result.html();
+    }
+}
+
+record XEmbedResponse(String html) {
 }
