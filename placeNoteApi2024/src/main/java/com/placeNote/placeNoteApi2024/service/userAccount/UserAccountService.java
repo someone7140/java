@@ -4,19 +4,25 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.auth0.jwt.interfaces.DecodedJWT;
 import graphql.GraphqlErrorException;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.execution.ErrorType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.placeNote.placeNoteApi2024.model.db.UserAccountDocument;
 import com.placeNote.placeNoteApi2024.model.graphql.auth.AccountUserResponse;
 import com.placeNote.placeNoteApi2024.repository.UserAccountRepository;
+import com.placeNote.placeNoteApi2024.service.common.GoogleStorageService;
 import com.placeNote.placeNoteApi2024.service.common.JwtService;
 
 @Service
 public class UserAccountService {
+    String ICON_IMAGE_FOLDER = "user_icon_image";
+
+    @Autowired
+    GoogleStorageService googleStorageService;
     @Autowired
     JwtService jwtService;
     @Autowired
@@ -26,7 +32,8 @@ public class UserAccountService {
     public AccountUserResponse addAccountUserByGmail(
             String userSettingId,
             String name,
-            String gmail) throws GraphqlErrorException {
+            String gmail,
+            MultipartFile imageFile) throws GraphqlErrorException {
 
         // userSettingId・gmailを指定してユーザを取得し未登録か確認
         Optional<UserAccountDocument> userOptional = userAccountRepository.findByUserSettingIdOrGmail(userSettingId, gmail);
@@ -39,6 +46,12 @@ public class UserAccountService {
         }
 
         try {
+            // アイコン画像がある場合はアップロード
+            String imageUrl = null;
+            if (imageFile != null) {
+                imageUrl = uploadNewIconImage(imageFile);
+            }
+            // DBにユーザ追加
             UserAccountDocument userAccountDocument = new UserAccountDocument(
                     UUID.randomUUID().toString(),
                     name,
@@ -46,7 +59,7 @@ public class UserAccountService {
                     gmail,
                     null,
                     null,
-                    null
+                    imageUrl
             );
             userAccountRepository.save(userAccountDocument);
             // idをトークン化してレスポンスを返す
@@ -94,7 +107,8 @@ public class UserAccountService {
         return new AccountUserResponse(
                 getUserAuthToken(doc.id()),
                 doc.userSettingId(),
-                doc.name()
+                doc.name(),
+                doc.imageUrl()
         );
     }
 
@@ -108,7 +122,18 @@ public class UserAccountService {
 
     // ユーザ認証用のトークンからidを取得
     public String getUserIdFromAuthToken(String token) throws GraphqlErrorException {
-        DecodedJWT decodeResult = jwtService.decodeToken(token);
+        var decodeResult = jwtService.decodeToken(token);
         return decodeResult.getClaim("userAccountId").asString();
     }
+
+    // アイコン画像の新規アップロード
+    private String uploadNewIconImage(MultipartFile imageFile) throws GraphqlErrorException {
+        // BlobIdの生成
+        var ext = FilenameUtils.getExtension(imageFile.getOriginalFilename());
+        var newFileName = UUID.randomUUID().toString();
+        var blobId = googleStorageService.getGcsBlobId(ICON_IMAGE_FOLDER, newFileName + "." + ext);
+        // アップロードして画像URL取得
+        return googleStorageService.uploadFileGcs(imageFile, blobId);
+    }
+
 }

@@ -1,7 +1,7 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.3.0-SNAPSHOT'
-	id 'io.spring.dependency-management' version '1.1.4'
+	id 'org.springframework.boot' version '3.3.3-SNAPSHOT'
+	id 'io.spring.dependency-management' version '1.1.6'
 }
 
 group = 'com.placeNote'
@@ -22,17 +22,21 @@ repositories {
 
 dependencies {
 	implementation 'com.auth0:java-jwt:4.4.0'
-	implementation 'org.springframework.boot:spring-boot-starter-web:3.3.2'
-	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb:3.3.2'
-	implementation 'org.springframework.boot:spring-boot-starter-graphql:3.3.2'
-	implementation group: 'org.springframework', name: 'spring-aop', version: '6.1.11'
-	implementation group: 'com.google.api-client', name: 'google-api-client', version: '2.6.0'
+	implementation 'org.springframework.boot:spring-boot-starter-web:3.3.3'
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb:3.3.3'
+	implementation 'org.springframework.boot:spring-boot-starter-graphql:3.3.3'
+	implementation group: 'org.springframework', name: 'spring-aop', version: '6.1.12'
+	implementation group: 'com.google.api-client', name: 'google-api-client', version: '2.7.0'
 	implementation group: 'org.aspectj', name: 'aspectjweaver', version: '1.9.22.1'
-	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-jdbc', version: '3.3.2'
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-jdbc', version: '3.3.3'
 	implementation 'com.github.kornilova203:mongo-jdbc-driver:1.19'
 	implementation 'org.flywaydb:flyway-database-mongodb:10.17.0'
 	implementation 'com.graphql-java:graphql-java-extended-scalars:22.0'
 	implementation group: 'org.jsoup', name: 'jsoup', version: '1.18.1'
+	implementation platform('com.google.cloud:libraries-bom:26.45.0')
+	implementation 'com.google.cloud:google-cloud-storage:2.42.0'
+	implementation 'commons-io:commons-io:2.16.1'
+	implementation 'name.nkonev.multipart-spring-graphql:multipart-spring-graphql:1.4.1'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework:spring-webflux'
 	testImplementation 'org.springframework.graphql:spring-graphql-test'

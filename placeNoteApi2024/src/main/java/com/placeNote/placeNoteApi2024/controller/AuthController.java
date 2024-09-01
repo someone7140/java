@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.placeNote.placeNoteApi2024.annotation.loginStatus.LoggedInOnly;
 import com.placeNote.placeNoteApi2024.annotation.loginStatus.NotLoggedInOnly;
@@ -49,11 +50,12 @@ public class AuthController {
     public AccountUserResponse addAccountUserByGoogle(
             @Argument String userSettingId,
             @Argument String name,
-            @Argument String authToken) throws GraphqlErrorException {
+            @Argument String authToken,
+            @Argument MultipartFile imageFile) throws GraphqlErrorException {
         // トークンからgmailを取得
         String gmail = googleAuthService.getGmailFromGoogleAuthToken(authToken);
         // ユーザを登録
-        return userAccountService.addAccountUserByGmail(userSettingId, name, gmail);
+        return userAccountService.addAccountUserByGmail(userSettingId, name, gmail, imageFile);
     }
 
     @QueryMapping
