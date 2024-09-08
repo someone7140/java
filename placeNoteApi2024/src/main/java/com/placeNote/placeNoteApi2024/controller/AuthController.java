@@ -58,6 +58,17 @@ public class AuthController {
         return userAccountService.addAccountUserByGmail(userSettingId, name, gmail, imageFile);
     }
 
+    @MutationMapping
+    @LoggedInOnly
+    public AccountUserResponse editAccountUser(
+            @Argument String userSettingId,
+            @Argument String name,
+            @Argument MultipartFile imageFile) throws GraphqlErrorException {
+        String userAccountId = requestManager.getUserAccountIdSession();
+        // ユーザの編集
+        return userAccountService.editAccountUser(userAccountId, userSettingId, name, imageFile);
+    }
+
     @QueryMapping
     @LoggedInOnly
     public AccountUserResponse getAccountUserByToken() throws GraphqlErrorException {

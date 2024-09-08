@@ -36,7 +36,7 @@ public class UserAccountService {
             MultipartFile imageFile) throws GraphqlErrorException {
 
         // userSettingId・gmailを指定してユーザを取得し未登録か確認
-        Optional<UserAccountDocument> userOptional = userAccountRepository.findByUserSettingIdOrGmail(userSettingId, gmail);
+        var userOptional = userAccountRepository.findByUserSettingIdOrGmail(userSettingId, gmail);
         if (userOptional.isPresent()) {
             throw GraphqlErrorException
                     .newErrorException()
@@ -75,7 +75,7 @@ public class UserAccountService {
 
     // gmailでのユーザ取得
     public AccountUserResponse getAccountUserByGmail(String gmail) throws GraphqlErrorException {
-        Optional<UserAccountDocument> userOptional = userAccountRepository.findByGmail(gmail);
+        var userOptional = userAccountRepository.findByGmail(gmail);
         if (userOptional.isEmpty()) {
             throw GraphqlErrorException
                     .newErrorException()
@@ -83,9 +83,71 @@ public class UserAccountService {
                     .message("Already registered account")
                     .build();
         }
-        UserAccountDocument userAccountDocument = userOptional.get();
+        var userAccountDocument = userOptional.get();
         // idをトークン化してレスポンスを返す
         return getAccountUserResponseFromDocument(userAccountDocument);
+    }
+
+    // ユーザの編集
+    public AccountUserResponse editAccountUser(
+            String userAccountId,
+            String userSettingId,
+            String name,
+            MultipartFile imageFile) throws GraphqlErrorException {
+        // 既存のユーザ情報をDBから取得
+        var userOptional = userAccountRepository.findById(userAccountId);
+        if (userOptional.isEmpty()) {
+            throw GraphqlErrorException
+                    .newErrorException()
+                    .errorClassification(ErrorType.BAD_REQUEST)
+                    .message("Already registered account")
+                    .build();
+        }
+        var registeredUserAccountDocument = userOptional.get();
+
+        // userSettingIdに変更がある場合に他で登録されているか
+        if (!userSettingId.equals(registeredUserAccountDocument.userSettingId())) {
+            var userByUserSettingIdOptional = userAccountRepository.findByUserSettingId(userSettingId);
+            if (userByUserSettingIdOptional.isPresent()) {
+                throw GraphqlErrorException
+                        .newErrorException()
+                        .errorClassification(ErrorType.BAD_REQUEST)
+                        .message("Already registered id")
+                        .build();
+            }
+        }
+
+        try {
+            // アイコン画像がある場合はアップロード
+            String imageUrl = registeredUserAccountDocument.imageUrl();
+            if (imageFile != null) {
+                // すでに画像がある場合は一度削除
+                if (registeredUserAccountDocument.imageUrl() != null) {
+                    deleteIconImage(registeredUserAccountDocument.imageUrl());
+                }
+                imageUrl = uploadNewIconImage(imageFile);
+            }
+
+            // DBユーザ更新
+            UserAccountDocument userAccountDocument = new UserAccountDocument(
+                    registeredUserAccountDocument.id(),
+                    name,
+                    userSettingId,
+                    registeredUserAccountDocument.gmail(),
+                    registeredUserAccountDocument.email(),
+                    registeredUserAccountDocument.password(),
+                    imageUrl
+            );
+            userAccountRepository.save(userAccountDocument);
+            // idをトークン化してレスポンスを返す
+            return getAccountUserResponseFromDocument(userAccountDocument);
+        } catch (Exception e) {
+            throw GraphqlErrorException
+                    .newErrorException()
+                    .errorClassification(ErrorType.INTERNAL_ERROR)
+                    .message(e.getMessage())
+                    .build();
+        }
     }
 
     // idでのユーザ取得
@@ -134,6 +196,11 @@ public class UserAccountService {
         var blobId = googleStorageService.getGcsBlobId(ICON_IMAGE_FOLDER, newFileName + "." + ext);
         // アップロードして画像URL取得
         return googleStorageService.uploadFileGcs(imageFile, blobId);
+    }
+
+    // アイコン画像の削除
+    private void deleteIconImage(String imageUrl) throws GraphqlErrorException {
+        googleStorageService.deleteFileGcs(ICON_IMAGE_FOLDER, imageUrl);
     }
 
 }

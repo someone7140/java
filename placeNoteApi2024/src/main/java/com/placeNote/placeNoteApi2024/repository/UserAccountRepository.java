@@ -12,4 +12,5 @@ public interface UserAccountRepository extends MongoRepository<UserAccountDocume
     public Optional<UserAccountDocument> findByUserSettingIdOrGmail(String userSettingId, String gmail);
     public Optional<UserAccountDocument> findByGmail(String gmail);
     public Optional<UserAccountDocument> findById(String id);
+    public Optional<UserAccountDocument> findByUserSettingId(String userSettingId);
 }
