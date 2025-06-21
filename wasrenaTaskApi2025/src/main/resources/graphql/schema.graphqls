@@ -1,0 +1,32 @@
+type CreateUserRegisterTokenResponse {
+  token: String!
+  lineName: String!
+}
+
+input NewUserAccountInput {
+  authToken: String!
+  userSettingId: String!
+  userName: String!
+}
+
+input CategoryInput {
+  name: String!
+  displayOrder: Int
+}
+
+type UserAccountResponse {
+  token: String!
+  userSettingId: String!
+  userName: String!
+  imageUrl: String
+  isLineBotFollow: Boolean!
+}
+
+type Query {
+  getUserRegisterToken(lineAuthCode: String!): CreateUserRegisterTokenResponse
+}
+
+type Mutation {
+  createCategory(input: CategoryInput!): Boolean
+  createUserAccount(input: NewUserAccountInput!): UserAccountResponse
+}
