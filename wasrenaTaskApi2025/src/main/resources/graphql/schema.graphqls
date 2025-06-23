@@ -1,3 +1,5 @@
+scalar JSON
+
 type CreateUserRegisterTokenResponse {
   token: String!
   lineName: String!
@@ -9,11 +11,6 @@ input NewUserAccountInput {
   userName: String!
 }
 
-input CategoryInput {
-  name: String!
-  displayOrder: Int
-}
-
 type UserAccountResponse {
   token: String!
   userSettingId: String!
@@ -22,11 +19,37 @@ type UserAccountResponse {
   isLineBotFollow: Boolean!
 }
 
+input CategoryInput {
+  name: String!
+  displayOrder: Int
+}
+
+enum DeadLineCheck {
+  DailyOnce
+  DailyHour
+  WeeklyDay
+  WeeklyDayInterval
+  MonthOnce
+  MonthDate
+  YearOnceDate
+}
+
+input TaskDefinitionInput {
+  title: String!
+  displayFlag: Boolean!
+  notificationFlag: Boolean!
+  categoryId: String
+  deadLineCheck: DeadLineCheck
+  deadLineCheckSubSetting: JSON
+  detail: String
+}
+
 type Query {
   getUserRegisterToken(lineAuthCode: String!): CreateUserRegisterTokenResponse
 }
 
 type Mutation {
   createCategory(input: CategoryInput!): Boolean
+  createTaskDefinition(input: TaskDefinitionInput!): Boolean
   createUserAccount(input: NewUserAccountInput!): UserAccountResponse
 }
