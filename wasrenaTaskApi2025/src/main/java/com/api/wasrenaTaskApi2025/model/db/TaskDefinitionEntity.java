@@ -74,4 +74,9 @@ public class TaskDefinitionEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", referencedColumnName = "id", insertable = false, updatable = false)
     private TaskCategoryEntity category;
+
+    // categoryはOptionalを返すGetterメソッドを追加
+    public Optional<TaskCategoryEntity> getCategoryOptional() {
+        return Optional.ofNullable(category);
+    }
 }

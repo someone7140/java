@@ -21,7 +21,7 @@ public class UserAccountService {
     @Autowired
     UserAccountRepository userAccountRepository;
 
-    // 認証コードを使ってLINEのユーザー情報を取得
+    // ユーザーの登録
     public UserAccountResponse createUserAccount(NewUserAccountInput input) {
         // 登録用のトークンからlineIdを取得
         var decodedJwt = jwtService.decodeToken(input.authToken());
@@ -54,6 +54,37 @@ public class UserAccountService {
         return convertUserAccountResponseFromEntity(userAccountEntity);
     }
 
+    // LINEのIDからユーザ情報を取得
+    public UserAccountResponse getUserAccountByLineId(String lineId) {
+        var registeredUserEntity = userAccountRepository.findByLineId(lineId);
+        // 取得できなかった場合はエラー
+        if (registeredUserEntity.isEmpty()) {
+            throw GraphqlErrorException
+                    .newErrorException()
+                    .errorClassification(ErrorType.UNAUTHORIZED)
+                    .message("Can not get user")
+                    .build();
+        }
+
+        // レスポンス情報を返す
+        return convertUserAccountResponseFromEntity(registeredUserEntity.get());
+    }
+
+    // IDからユーザ情報を取得
+    public UserAccountResponse getUserAccountById(String id) {
+        var registeredUserEntity = userAccountRepository.findById(id);
+        // 取得できなかった場合はエラー
+        if (registeredUserEntity.isEmpty()) {
+            throw GraphqlErrorException
+                    .newErrorException()
+                    .errorClassification(ErrorType.UNAUTHORIZED)
+                    .message("Can not get user")
+                    .build();
+        }
+
+        // レスポンス情報を返す
+        return convertUserAccountResponseFromEntity(registeredUserEntity.get());
+    }
     // ユーザーのentityからレスポンスを取得
     private UserAccountResponse convertUserAccountResponseFromEntity(UserAccountEntity userAccountEntity) {
         return new UserAccountResponse(

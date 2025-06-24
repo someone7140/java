@@ -57,7 +57,7 @@ task_definition (category_id);
 create table task_execute (
   id varchar(255) primary key,
   task_definition_id varchar(255) not null references task_definition(id),
-  execute_user_id varchar(255) not null,
+  execute_user_id varchar(255) not null references user_accounts(id),
   execute_date_time timestamptz not null,
   memo text
 );

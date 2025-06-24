@@ -1,21 +1,26 @@
 package com.api.wasrenaTaskApi2025.controller;
 
 import com.api.wasrenaTaskApi2025.model.graphql.task.TaskDefinitionInput;
+import com.api.wasrenaTaskApi2025.model.graphql.task.TaskDefinitionResponse;
 import com.api.wasrenaTaskApi2025.service.task.TaskDefinitionService;
 
 import graphql.GraphqlErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
+import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+
+import java.util.List;
 
 @Controller
 public class TaskController {
     @Autowired
     TaskDefinitionService taskDefinitionService;
 
+    // タスク定義の新規登録
     @PreAuthorize("isAuthenticated()")
     @MutationMapping
     public boolean createTaskDefinition(
@@ -24,6 +29,14 @@ public class TaskController {
         var userId = authentication.getPrincipal().toString();
         taskDefinitionService.createTaskDefinition(input, userId);
         return true;
+    }
+
+    // タスク定義の一覧取得
+    @PreAuthorize("isAuthenticated()")
+    @QueryMapping
+    public List<TaskDefinitionResponse> getTaskDefinitions(Authentication authentication) throws GraphqlErrorException {
+        var userId = authentication.getPrincipal().toString();
+        return taskDefinitionService.getTaskDefinitionListByUserId(userId);
     }
 
 }
