@@ -31,12 +31,33 @@ public class TaskController {
         return true;
     }
 
+    // タスク定義の更新
+    @PreAuthorize("isAuthenticated()")
+    @MutationMapping
+    public boolean updateTaskDefinition(
+            @Argument String id,
+            @Argument TaskDefinitionInput input,
+            Authentication authentication) throws GraphqlErrorException {
+        var userId = authentication.getPrincipal().toString();
+        taskDefinitionService.updateTaskDefinition(id, input, userId);
+        return true;
+    }
+
     // タスク定義の一覧取得
     @PreAuthorize("isAuthenticated()")
     @QueryMapping
     public List<TaskDefinitionResponse> getTaskDefinitions(Authentication authentication) throws GraphqlErrorException {
         var userId = authentication.getPrincipal().toString();
-        return taskDefinitionService.getTaskDefinitionListByUserId(userId);
+        return taskDefinitionService.getTaskDefinitionList(userId);
     }
 
+    // ID指定でのタスク定義取得
+    @PreAuthorize("isAuthenticated()")
+    @QueryMapping
+    public TaskDefinitionResponse getTaskDefinitionById(
+            @Argument String id,
+            Authentication authentication) throws GraphqlErrorException {
+        var userId = authentication.getPrincipal().toString();
+        return taskDefinitionService.getTaskDefinitionById(userId);
+    }
 }

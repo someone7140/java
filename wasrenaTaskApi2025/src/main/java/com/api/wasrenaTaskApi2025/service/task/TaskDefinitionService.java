@@ -6,8 +6,9 @@ import com.api.wasrenaTaskApi2025.model.graphql.task.TaskDefinitionResponse;
 import com.api.wasrenaTaskApi2025.repository.TaskDefinitionRepository;
 
 import com.fasterxml.uuid.Generators;
+import graphql.GraphqlErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.graphql.execution.ErrorType;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -35,8 +36,37 @@ public class TaskDefinitionService {
         taskDefinitionRepository.save(taskDefinitionEntity);
     }
 
+    // タスク定義を更新
+    public void updateTaskDefinition(
+            String id,
+            TaskDefinitionInput input,
+            String userId) {
+        var registeredDefinition = taskDefinitionRepository.findByIdAndOwnerUserId(id, userId);
+
+        // 取得できなかった場合はエラー
+        if (registeredDefinition.isEmpty()) {
+            throw GraphqlErrorException
+                    .newErrorException()
+                    .errorClassification(ErrorType.BAD_REQUEST)
+                    .message("Can not get definition")
+                    .build();
+        }
+
+        // 更新処理
+        var entity = registeredDefinition.get();
+        entity.setTitle(input.title());
+        entity.setDisplayFlag(input.displayFlag());
+        entity.setNotificationFlag(input.notificationFlag());
+        entity.setCategoryId(input.categoryId().orElse(null));
+        entity.setDeadLineCheck(input.deadLineCheck().orElse(null));
+        entity.setDeadLineCheckSubSetting(input.deadLineCheckSubSetting().orElse(null));
+        entity.setDetail(input.detail().orElse(null));
+        taskDefinitionRepository.save(entity);
+    }
+
+
     // タスク定義の一覧を取得
-    public List<TaskDefinitionResponse> getTaskDefinitionListByUserId(String userId) {
+    public List<TaskDefinitionResponse> getTaskDefinitionList(String userId) {
         // Limit300件でDBからデータ取得
         var specifications = TaskDefinitionRepository.specificationHasOwnerUserId(userId);
         var queryResult = taskDefinitionRepository.findBy(specifications, fetchable ->
@@ -59,4 +89,32 @@ public class TaskDefinitionService {
         return responseList;
     }
 
+    // ID指定でのタスク定義の取得
+    public TaskDefinitionResponse getTaskDefinitionById(String userId) {
+        var specifications = TaskDefinitionRepository.specificationHasOwnerUserId(userId);
+        var queryResult = taskDefinitionRepository.findBy(specifications, fetchable ->
+                fetchable.project("category").first());
+
+        // 取得できなかった場合はエラー
+        if (queryResult.isEmpty()) {
+            throw GraphqlErrorException
+                    .newErrorException()
+                    .errorClassification(ErrorType.BAD_REQUEST)
+                    .message("Can not get definition")
+                    .build();
+        }
+
+        var entity = queryResult.get();
+        return new TaskDefinitionResponse(
+                entity.getId(),
+                entity.getTitle(),
+                entity.isDisplayFlag(),
+                entity.isNotificationFlag(),
+                entity.getCategoryIdOptional(),
+                entity.getCategoryOptional().map(c -> c.getName()),
+                entity.getDeadLineCheckOptional(),
+                entity.getDeadLineCheckSubSettingOptional(),
+                entity.getDetailOptional()
+        );
+    }
 }
