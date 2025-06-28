@@ -1,3 +1,4 @@
+scalar DateTime
 scalar JSON
 
 type CreateUserRegisterTokenResponse {
@@ -7,6 +8,11 @@ type CreateUserRegisterTokenResponse {
 
 input NewUserAccountInput {
   authToken: String!
+  userSettingId: String!
+  userName: String!
+}
+
+input UpdateUserAccountInput {
   userSettingId: String!
   userName: String!
 }
@@ -62,8 +68,30 @@ type TaskDefinitionResponse {
   detail: String
 }
 
+type TaskCheckDisplayResponse {
+  id: String!
+  title: String!
+  displayFlag: Boolean!
+  notificationFlag: Boolean!
+  categoryId: String
+  categoryName: String
+  deadLineCheck: DeadLineCheck
+  deadLineCheckSubSetting: JSON
+  detail: String
+  latestExecDateTime: DateTime
+  nextDeadLineDateTime: DateTime
+  isExceedDeadLine: Boolean!
+}
+
 input TaskExecuteInput {
   taskDefinitionId: String!
+  memo: String
+}
+
+type TaskExecuteResponse {
+  id: String!
+  taskDefinitionId: String!
+  executeDateTime: DateTime!
   memo: String
 }
 
@@ -75,14 +103,19 @@ type Query {
   getTaskCategoryById(id: String!): TaskCategoryResponse
   getTaskDefinitions: [TaskDefinitionResponse!]
   getTaskDefinitionById(id: String!): TaskDefinitionResponse
+  getTaskCheckDisplayList: [TaskCheckDisplayResponse!]
+  getTaskExecuteListByDefinitionId(taskDefinitionId: String!): [TaskExecuteResponse!]
 }
 
 type Mutation {
   createUserAccount(input: NewUserAccountInput!): UserAccountResponse
+  updateUserAccount(input: UpdateUserAccountInput!): UserAccountResponse
   createCategory(input: CategoryInput!): Boolean
   updateCategory(id: String!, input: CategoryInput!): Boolean
   deleteCategory(id: String!): Boolean
   createTaskDefinition(input: TaskDefinitionInput!): Boolean
   updateTaskDefinition(id: String!, input: TaskDefinitionInput!): Boolean
+  deleteTaskDefinition(id: String!): Boolean
   createTaskExecute(input: TaskExecuteInput!): Boolean
+  deleteTaskExecute(id: String!): Boolean
 }

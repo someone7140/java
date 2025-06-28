@@ -2,6 +2,7 @@ package com.api.wasrenaTaskApi2025.service.userAccount;
 
 import com.api.wasrenaTaskApi2025.model.db.UserAccountEntity;
 import com.api.wasrenaTaskApi2025.model.graphql.auth.NewUserAccountInput;
+import com.api.wasrenaTaskApi2025.model.graphql.auth.UpdateUserAccountInput;
 import com.api.wasrenaTaskApi2025.model.graphql.auth.UserAccountResponse;
 import com.api.wasrenaTaskApi2025.repository.UserAccountRepository;
 import com.api.wasrenaTaskApi2025.service.common.JwtService;
@@ -54,6 +55,27 @@ public class UserAccountService {
         return convertUserAccountResponseFromEntity(userAccountEntity);
     }
 
+    // ユーザー情報の更新
+    public UserAccountResponse updateUserAccount(UpdateUserAccountInput input, String userId) {
+        var registeredUser= userAccountRepository.findById(userId);
+        // 取得できなかった場合はエラー
+        if (registeredUser.isEmpty()) {
+            throw GraphqlErrorException
+                    .newErrorException()
+                    .errorClassification(ErrorType.BAD_REQUEST)
+                    .message("Can not get definition")
+                    .build();
+        }
+
+        // 更新処理
+        var entity = registeredUser.get();
+        entity.setUserName(input.userName());
+        entity.setUserSettingId(input.userSettingId());
+
+        // レスポンス情報を返す
+        return convertUserAccountResponseFromEntity(entity);
+    }
+
     // LINEのIDからユーザ情報を取得
     public UserAccountResponse getUserAccountByLineId(String lineId) {
         var registeredUserEntity = userAccountRepository.findByLineId(lineId);
@@ -85,6 +107,7 @@ public class UserAccountService {
         // レスポンス情報を返す
         return convertUserAccountResponseFromEntity(registeredUserEntity.get());
     }
+
     // ユーザーのentityからレスポンスを取得
     private UserAccountResponse convertUserAccountResponseFromEntity(UserAccountEntity userAccountEntity) {
         return new UserAccountResponse(

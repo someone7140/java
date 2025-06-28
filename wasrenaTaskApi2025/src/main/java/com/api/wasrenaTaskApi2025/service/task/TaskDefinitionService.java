@@ -4,6 +4,7 @@ import com.api.wasrenaTaskApi2025.model.db.TaskDefinitionEntity;
 import com.api.wasrenaTaskApi2025.model.graphql.task.TaskDefinitionInput;
 import com.api.wasrenaTaskApi2025.model.graphql.task.TaskDefinitionResponse;
 import com.api.wasrenaTaskApi2025.repository.TaskDefinitionRepository;
+import com.api.wasrenaTaskApi2025.repository.TaskExecuteRepository;
 
 import com.fasterxml.uuid.Generators;
 import graphql.GraphqlErrorException;
@@ -18,6 +19,8 @@ import java.util.List;
 public class TaskDefinitionService {
     @Autowired
     TaskDefinitionRepository taskDefinitionRepository;
+    @Autowired
+    TaskExecuteRepository taskExecuteRepository;
 
     // タスク定義を追加
     public void createTaskDefinition(TaskDefinitionInput input, String userId) {
@@ -64,6 +67,19 @@ public class TaskDefinitionService {
         taskDefinitionRepository.save(entity);
     }
 
+    // タスク定義を削除
+    public void deleteTaskDefinition(String id, String userId) {
+        var registeredTask = taskDefinitionRepository.findByIdAndOwnerUserId(id, userId);
+        // 取得できなかった場合は処理終了
+        if (registeredTask.isEmpty()) {
+            return;
+        }
+
+        // タスク定義の実行履歴を削除
+        taskExecuteRepository.deleteByTaskDefinitionIdAndExecuteUserId(id, userId);
+        // タスク定義を削除
+        taskDefinitionRepository.delete(registeredTask.get());
+    }
 
     // タスク定義の一覧を取得
     public List<TaskDefinitionResponse> getTaskDefinitionList(String userId) {

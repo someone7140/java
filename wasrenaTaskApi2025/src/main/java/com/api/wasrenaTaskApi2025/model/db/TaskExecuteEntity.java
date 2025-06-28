@@ -1,5 +1,7 @@
 package com.api.wasrenaTaskApi2025.model.db;
 
+import com.api.wasrenaTaskApi2025.model.db.converter.OffsetDateTimeConverter;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,6 +28,7 @@ public class TaskExecuteEntity {
     private String executeUserId;
 
     @Column(name = "execute_date_time")
+    @Convert(converter = OffsetDateTimeConverter.class)
     private OffsetDateTime executeDateTime;
 
     @Column(name = "memo")

@@ -1,4 +1,4 @@
-package com.api.wasrenaTaskApi2025.model.graphql.task;
+package com.api.wasrenaTaskApi2025.model.graphql.taskExecute;
 
 import java.util.Optional;
 

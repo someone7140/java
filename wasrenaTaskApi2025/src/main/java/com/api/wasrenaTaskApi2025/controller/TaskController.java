@@ -1,7 +1,9 @@
 package com.api.wasrenaTaskApi2025.controller;
 
+import com.api.wasrenaTaskApi2025.model.graphql.task.TaskCheckDisplayResponse;
 import com.api.wasrenaTaskApi2025.model.graphql.task.TaskDefinitionInput;
 import com.api.wasrenaTaskApi2025.model.graphql.task.TaskDefinitionResponse;
+import com.api.wasrenaTaskApi2025.service.task.TaskCheckService;
 import com.api.wasrenaTaskApi2025.service.task.TaskDefinitionService;
 
 import graphql.GraphqlErrorException;
@@ -17,6 +19,8 @@ import java.util.List;
 
 @Controller
 public class TaskController {
+    @Autowired
+    TaskCheckService taskCheckService;
     @Autowired
     TaskDefinitionService taskDefinitionService;
 
@@ -43,6 +47,17 @@ public class TaskController {
         return true;
     }
 
+    // タスク定義の削除
+    @PreAuthorize("isAuthenticated()")
+    @MutationMapping
+    public boolean deleteTaskDefinition(
+            @Argument String id,
+            Authentication authentication) throws GraphqlErrorException {
+        var userId = authentication.getPrincipal().toString();
+        taskDefinitionService.deleteTaskDefinition(id, userId);
+        return true;
+    }
+
     // タスク定義の一覧取得
     @PreAuthorize("isAuthenticated()")
     @QueryMapping
@@ -59,5 +74,13 @@ public class TaskController {
             Authentication authentication) throws GraphqlErrorException {
         var userId = authentication.getPrincipal().toString();
         return taskDefinitionService.getTaskDefinitionById(userId);
+    }
+
+    // チェック対象のタスク一覧取得
+    @PreAuthorize("isAuthenticated()")
+    @QueryMapping
+    public List<TaskCheckDisplayResponse> getTaskCheckDisplayList(Authentication authentication) throws GraphqlErrorException {
+        var userId = authentication.getPrincipal().toString();
+        return taskCheckService.getTaskCheckDisplayList(userId);
     }
 }

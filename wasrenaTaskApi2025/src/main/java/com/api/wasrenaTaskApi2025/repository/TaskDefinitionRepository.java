@@ -21,7 +21,7 @@ import java.util.Optional;
 public interface TaskDefinitionRepository extends JpaRepository<TaskDefinitionEntity, String>,
         JpaSpecificationExecutor<TaskDefinitionEntity> {
 
-    public Optional<TaskDefinitionEntity> findByIdAndOwnerUserId(String id, String userId);
+    Optional<TaskDefinitionEntity> findByIdAndOwnerUserId(String id, String ownerUserId);
 
     // ユーザーIDを指定してタスク定義の一覧を取得するspecification
     static Specification<TaskDefinitionEntity> specificationHasOwnerUserId(String ownerUserId) {

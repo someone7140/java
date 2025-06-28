@@ -2,6 +2,7 @@ package com.api.wasrenaTaskApi2025.controller;
 
 import com.api.wasrenaTaskApi2025.model.graphql.auth.CreateUserRegisterTokenResponse;
 import com.api.wasrenaTaskApi2025.model.graphql.auth.NewUserAccountInput;
+import com.api.wasrenaTaskApi2025.model.graphql.auth.UpdateUserAccountInput;
 import com.api.wasrenaTaskApi2025.model.graphql.auth.UserAccountResponse;
 import com.api.wasrenaTaskApi2025.service.common.JwtService;
 import com.api.wasrenaTaskApi2025.service.line.LineAuthApiService;
@@ -68,4 +69,13 @@ public class AuthController {
         return userAccountService.createUserAccount(input);
     }
 
+    // ユーザーの更新
+    @PreAuthorize("isAuthenticated()")
+    @MutationMapping
+    public UserAccountResponse updateUserAccount(
+            @Argument UpdateUserAccountInput input,
+            Authentication authentication) throws GraphqlErrorException {
+        var userId = authentication.getPrincipal().toString();
+        return userAccountService.updateUserAccount(input, userId);
+    }
 }

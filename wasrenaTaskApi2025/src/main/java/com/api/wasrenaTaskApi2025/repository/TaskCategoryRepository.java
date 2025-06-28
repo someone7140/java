@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface TaskCategoryRepository extends JpaRepository<TaskCategoryEntity, String>,
         JpaSpecificationExecutor<TaskCategoryEntity> {
 
-    public Optional<TaskCategoryEntity> findByIdAndOwnerUserId(String id, String userId);
+    Optional<TaskCategoryEntity> findByIdAndOwnerUserId(String id, String ownerUserId);
 
     // ユーザーIDを指定してカテゴリーの一覧を取得するspecification
     static Specification<TaskCategoryEntity> specificationHasOwnerUserId(String ownerUserId) {
