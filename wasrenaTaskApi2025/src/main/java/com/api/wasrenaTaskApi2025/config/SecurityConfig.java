@@ -47,6 +47,7 @@ public class SecurityConfig {
                         // 公開エンドポイント
                         .requestMatchers("/graphql").permitAll()
                         .requestMatchers("/graphiql/**").permitAll()
+                        .requestMatchers("/line_callback").permitAll()
                         // その他は認証必須
                         .anyRequest().authenticated()
                 ).exceptionHandling(exception -> exception

@@ -32,9 +32,9 @@ public class LineAuthApiService {
             .build();
 
     // 認証コードを使ってLINEのユーザー情報を取得
-    public LineAuthUserInfo getLineUserInfoFromAuthCode(String authCode) {
+    public LineAuthUserInfo getLineUserInfoFromAuthCode(String authCode, String redirectPath) {
         // アクセストークンを取得
-        var accessToken = getLineAccessTokenFromAuthCode(authCode);
+        var accessToken = getLineAccessTokenFromAuthCode(authCode, redirectPath);
 
         // ユーザ情報を取得
         LineAuthUserInfo userInfo;
@@ -67,14 +67,14 @@ public class LineAuthApiService {
     }
 
     // 認証コードを使ってLINEのアクセストークンを取得
-    private String getLineAccessTokenFromAuthCode(String authCode) {
+    private String getLineAccessTokenFromAuthCode(String authCode, String redirectPath) {
         // リクエストボディにクライアント認証情報も含める
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
         formData.add("grant_type", "authorization_code");
         formData.add("code", authCode);
         formData.add("redirect_uri", String.format("%s%s",
                 env.getProperty("wasurena-task.frontend.domain"),
-                env.getProperty("wasurena-task.line.regsiter.redirect.path")));
+                redirectPath));
         formData.add("client_id", env.getProperty("line.auth.client-id"));
         formData.add("client_secret", env.getProperty("line.auth.secret-id"));
 

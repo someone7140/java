@@ -10,6 +10,7 @@ import com.api.wasrenaTaskApi2025.service.userAccount.UserAccountService;
 
 import graphql.GraphqlErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.execution.ErrorType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,7 +23,8 @@ import java.util.HashMap;
 
 @Controller
 public class AuthController {
-
+    @Autowired
+    Environment env;
     @Autowired
     LineAuthApiService lineApiService;
     @Autowired
@@ -34,7 +36,8 @@ public class AuthController {
     @QueryMapping
     public CreateUserRegisterTokenResponse getUserRegisterToken(@Argument String lineAuthCode) throws GraphqlErrorException {
         // LINEのAPIからユーザ情報を取得
-        var lineUserInfo = lineApiService.getLineUserInfoFromAuthCode(lineAuthCode);
+        var lineUserInfo = lineApiService.getLineUserInfoFromAuthCode(
+                lineAuthCode, env.getProperty("wasurena-task.line.regsiter.redirect.path"));
 
         // 登録済みのユーザか
         var isRegistered = userAccountService.checkRegisteredUserAccountByLineId(lineUserInfo.userId());
@@ -60,7 +63,8 @@ public class AuthController {
     @QueryMapping
     public UserAccountResponse getRegisteredUser(@Argument String lineAuthCode) throws GraphqlErrorException {
         // LINEのAPIからユーザ情報を取得
-        var lineUserInfo = lineApiService.getLineUserInfoFromAuthCode(lineAuthCode);
+        var lineUserInfo = lineApiService.getLineUserInfoFromAuthCode(
+                lineAuthCode, env.getProperty("wasurena-task.line.login.redirect.path"));
         // LINEのIDからユーザー情報を取得
         return userAccountService.getUserAccountByLineId(lineUserInfo.userId());
     }
