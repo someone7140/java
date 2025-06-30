@@ -2,7 +2,6 @@ package com.api.wasrenaTaskApi2025.service.line;
 
 import com.api.wasrenaTaskApi2025.model.auth.LineAuthUserInfo;
 
-import com.api.wasrenaTaskApi2025.repository.UserAccountRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import graphql.GraphqlErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +21,6 @@ import java.time.Duration;
 public class LineAuthApiService {
     @Autowired
     Environment env;
-    @Autowired
-    UserAccountRepository userAccountRepository;
 
     // 認証用のAPIのURL定数
     private final String LINE_TOKEN_API_URL = "https://api.line.me/oauth2/v2.1/token";
@@ -63,16 +60,6 @@ public class LineAuthApiService {
                     .newErrorException()
                     .errorClassification(ErrorType.UNAUTHORIZED)
                     .message(e.getMessage())
-                    .build();
-        }
-
-        // 該当のlineIdが既に登録済みの場合はエラー
-        var userEntity = userAccountRepository.findByLineId(userInfo.userId());
-        if (userEntity.isPresent()) {
-            throw GraphqlErrorException
-                    .newErrorException()
-                    .errorClassification(ErrorType.FORBIDDEN)
-                    .message("Duplicate line id")
                     .build();
         }
 

@@ -11,6 +11,7 @@ import com.api.wasrenaTaskApi2025.service.userAccount.UserAccountService;
 import graphql.GraphqlErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
+import org.springframework.graphql.execution.ErrorType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -34,6 +35,16 @@ public class AuthController {
     public CreateUserRegisterTokenResponse getUserRegisterToken(@Argument String lineAuthCode) throws GraphqlErrorException {
         // LINEのAPIからユーザ情報を取得
         var lineUserInfo = lineApiService.getLineUserInfoFromAuthCode(lineAuthCode);
+
+        // 登録済みのユーザか
+        var isRegistered = userAccountService.checkRegisteredUserAccountByLineId(lineUserInfo.userId());
+        if (isRegistered) {
+            throw GraphqlErrorException
+                    .newErrorException()
+                    .errorClassification(ErrorType.FORBIDDEN)
+                    .message("Registered line id")
+                    .build();
+        }
 
         // 必要なユーザー情報をMapに変換してtokenを生成
         var claimMap = new HashMap<String, String>();

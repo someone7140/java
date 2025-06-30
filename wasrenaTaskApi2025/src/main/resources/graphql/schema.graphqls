@@ -104,7 +104,9 @@ type Query {
   getTaskDefinitions: [TaskDefinitionResponse!]
   getTaskDefinitionById(id: String!): TaskDefinitionResponse
   getTaskCheckDisplayList: [TaskCheckDisplayResponse!]
-  getTaskExecuteListByDefinitionId(taskDefinitionId: String!): [TaskExecuteResponse!]
+  getTaskExecuteListByDefinitionId(
+    taskDefinitionId: String!
+  ): [TaskExecuteResponse!]
 }
 
 type Mutation {

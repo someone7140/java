@@ -39,7 +39,7 @@ public class CategoryController {
             @Argument CategoryInput input,
             Authentication authentication) throws GraphqlErrorException {
         var userId = authentication.getPrincipal().toString();
-        taskCategoryService.deleteTaskCategory(id, userId);
+        taskCategoryService.updateTaskCategory(id, input, userId);
         return true;
     }
 

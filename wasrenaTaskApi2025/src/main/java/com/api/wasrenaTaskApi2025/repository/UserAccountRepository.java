@@ -13,5 +13,7 @@ public interface UserAccountRepository extends JpaRepository<UserAccountEntity, 
 
     Optional<UserAccountEntity> findByLineId(String lineId);
 
+    Optional<UserAccountEntity> findByUserSettingId(String userSettingId);
+
     Optional<UserAccountEntity> findByUserSettingIdOrLineId(String userSettingId, String lineId);
 }

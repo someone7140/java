@@ -35,7 +35,7 @@ public class TaskCheckLogic {
     public Boolean getIsExceededDeadLine(OffsetDateTime now) {
         // 実行履歴がない場合は期限超過とみなす
         if (latestExecDateTime.isEmpty()) {
-            return false;
+            return true;
         }
 
         switch (deadLineCheck) {

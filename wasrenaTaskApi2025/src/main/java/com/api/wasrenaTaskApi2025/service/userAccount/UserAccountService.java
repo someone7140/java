@@ -34,7 +34,10 @@ public class UserAccountService {
         if (registeredUserEntity.isPresent()) {
             throw GraphqlErrorException
                     .newErrorException()
-                    .errorClassification(ErrorType.FORBIDDEN)
+                    .errorClassification(
+                            registeredUserEntity.get().getLineId().equals(lineId) ?
+                                    ErrorType.FORBIDDEN :
+                                    ErrorType.BAD_REQUEST)
                     .message("Duplicate user")
                     .build();
         }
@@ -57,7 +60,7 @@ public class UserAccountService {
 
     // ユーザー情報の更新
     public UserAccountResponse updateUserAccount(UpdateUserAccountInput input, String userId) {
-        var registeredUser= userAccountRepository.findById(userId);
+        var registeredUser = userAccountRepository.findById(userId);
         // 取得できなかった場合はエラー
         if (registeredUser.isEmpty()) {
             throw GraphqlErrorException
@@ -66,9 +69,22 @@ public class UserAccountService {
                     .message("Can not get definition")
                     .build();
         }
+        var entity = registeredUser.get();
+
+        // userSettingIdが更新されていた場合
+        if (!input.userSettingId().equals(entity.getUserSettingId())) {
+            // 他に登録してないかチェック
+            var registeredUserSettingId = userAccountRepository.findByUserSettingId(input.userSettingId());
+            if (registeredUserSettingId.isPresent()) {
+                throw GraphqlErrorException
+                        .newErrorException()
+                        .errorClassification(ErrorType.BAD_REQUEST)
+                        .message("Duplicate userSettingId")
+                        .build();
+            }
+        }
 
         // 更新処理
-        var entity = registeredUser.get();
         entity.setUserName(input.userName());
         entity.setUserSettingId(input.userSettingId());
 
@@ -90,6 +106,12 @@ public class UserAccountService {
 
         // レスポンス情報を返す
         return convertUserAccountResponseFromEntity(registeredUserEntity.get());
+    }
+
+    // LINEのIDから登録済みのユーザかチェック
+    public Boolean checkRegisteredUserAccountByLineId(String lineId) {
+        var registeredUserEntity = userAccountRepository.findByLineId(lineId);
+        return registeredUserEntity.isPresent();
     }
 
     // IDからユーザ情報を取得
