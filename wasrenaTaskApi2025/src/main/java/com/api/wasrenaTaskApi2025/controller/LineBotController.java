@@ -29,6 +29,7 @@ public class LineBotController {
                     String userId = sourceNode != null ? sourceNode.get("userId").asText() : null;
                     String replyToken = eventNode.get("replyToken") != null ? eventNode.get("replyToken").asText() : null;
 
+                    // ボット用アカウントの追加とブロック時の処理
                     if ("follow".equals(type)) {
                         lineHandlerService.followBotAccount(userId, replyToken);
                     } else if ("unfollow".equals(type)) {

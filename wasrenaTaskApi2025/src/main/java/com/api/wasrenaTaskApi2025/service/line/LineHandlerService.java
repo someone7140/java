@@ -1,5 +1,6 @@
 package com.api.wasrenaTaskApi2025.service.line;
 
+import com.api.wasrenaTaskApi2025.repository.TaskDefinitionRepository;
 import com.api.wasrenaTaskApi2025.repository.UserAccountRepository;
 
 import com.linecorp.bot.messaging.client.MessagingApiClient;
@@ -21,6 +22,8 @@ public class LineHandlerService {
     private Environment env;
     @Autowired
     private UserAccountRepository userAccountRepository;
+    @Autowired
+    private TaskDefinitionRepository taskDefinitionRepository;
     @Autowired
     private MessagingApiClient messagingApiClient; // LINE Messaging APIのクライアント
 
@@ -63,16 +66,16 @@ public class LineHandlerService {
      * ユーザーIDを受け取り、DB処理を行います。アンフォロー時には通常メッセージは返しません。
      */
     public void handleUnfollowEvent(String lineUserID) {
-        System.out.println("User unfollowed: " + lineUserID); // ログ出力
-
-        // DBに登録済みか確認
+        // DBに登録済みユーザか確認
         var registeredUserEntity = userAccountRepository.findByLineId(lineUserID);
         if (registeredUserEntity.isEmpty()) {
             return; // 登録されていない場合は何もしない
         }
 
+        // タスクのLINE通知をOFFにする
+        taskDefinitionRepository.updateNotificationFlagOff(registeredUserEntity.get().getId());
+        // ユーザーのLINEボットのフォローフラグをfalseにする。
         var entity = registeredUserEntity.get();
-        // LINEボットのフォローフラグをfalseにする。
         entity.setIsLineBotFollow(false);
         userAccountRepository.save(entity);
         // アンフォローイベントに対しては、LINEにメッセージは送信しない（ユーザーがブロックしているため、メッセージが届かないため）

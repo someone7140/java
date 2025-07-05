@@ -110,6 +110,7 @@ type Query {
 }
 
 type Mutation {
+  executeTaskCheckNotifyBatch(batchToken: String!): Boolean
   createUserAccount(input: NewUserAccountInput!): UserAccountResponse
   updateUserAccount(input: UpdateUserAccountInput!): UserAccountResponse
   createCategory(input: CategoryInput!): Boolean

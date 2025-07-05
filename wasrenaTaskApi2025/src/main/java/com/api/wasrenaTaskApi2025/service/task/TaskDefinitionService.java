@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TaskDefinitionService {
@@ -84,7 +85,7 @@ public class TaskDefinitionService {
     // タスク定義の一覧を取得
     public List<TaskDefinitionResponse> getTaskDefinitionList(String userId) {
         // Limit300件でDBからデータ取得
-        var specifications = TaskDefinitionRepository.specificationHasOwnerUserId(userId);
+        var specifications = TaskDefinitionRepository.specificationHasOwnerUserId(userId, Optional.empty());
         var queryResult = taskDefinitionRepository.findBy(specifications, fetchable ->
                 fetchable.project("category").limit(300).all());
 
@@ -106,8 +107,8 @@ public class TaskDefinitionService {
     }
 
     // ID指定でのタスク定義の取得
-    public TaskDefinitionResponse getTaskDefinitionById(String userId) {
-        var specifications = TaskDefinitionRepository.specificationHasOwnerUserId(userId);
+    public TaskDefinitionResponse getTaskDefinitionById(String userId, String definitionId) {
+        var specifications = TaskDefinitionRepository.specificationHasOwnerUserId(userId, Optional.of(definitionId));
         var queryResult = taskDefinitionRepository.findBy(specifications, fetchable ->
                 fetchable.project("category").first());
 

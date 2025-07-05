@@ -73,7 +73,7 @@ public class TaskController {
             @Argument String id,
             Authentication authentication) throws GraphqlErrorException {
         var userId = authentication.getPrincipal().toString();
-        return taskDefinitionService.getTaskDefinitionById(userId);
+        return taskDefinitionService.getTaskDefinitionById(userId, id);
     }
 
     // チェック対象のタスク一覧取得
