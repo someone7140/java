@@ -1,0 +1,1 @@
+* dockerのビルドは「docker build -t wasurena-task-api .」
