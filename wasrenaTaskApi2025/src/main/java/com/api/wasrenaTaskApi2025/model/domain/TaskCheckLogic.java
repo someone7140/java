@@ -278,7 +278,7 @@ public class TaskCheckLogic {
 
         // 今月の1日以降に実行されているか
         if (latestExecDateTime.isPresent()
-                || ChronoUnit.HOURS.between(firstDayThisMonth.withHour(0), latestExecDateTime.get()) >= 0) {
+                && ChronoUnit.HOURS.between(firstDayThisMonth.withHour(0), latestExecDateTime.get()) >= 0) {
             // 来月の末日
             var nextDeadLineDateTime = firstDayThisMonth.plusMonths(2).minusDays(-1);
             return Optional.of(nextDeadLineDateTime);
