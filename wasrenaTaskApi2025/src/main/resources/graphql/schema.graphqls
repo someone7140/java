@@ -96,6 +96,7 @@ type TaskExecuteResponse {
 }
 
 type Query {
+  pingCheckExecute: Boolean
   getUserRegisterToken(lineAuthCode: String!): CreateUserRegisterTokenResponse
   getRegisteredUser(lineAuthCode: String!): UserAccountResponse
   getUserAccountFromAuthHeader: UserAccountResponse
