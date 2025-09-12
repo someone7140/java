@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TaskCheckRepository extends JpaRepository<TaskCheckQueryResult, String> {
@@ -20,11 +21,15 @@ public interface TaskCheckRepository extends JpaRepository<TaskCheckQueryResult,
             "group by task_definition_id) exec on def.id = exec.task_definition_id " +
             "left outer join task_category cate on cate.id = def.category_id " +
             "where def.display_flag = true and def.owner_user_id = :ownerUserId " +
+            "and (def.id = coalesce(:taskDefinitionId, def.id)) " +
             "order by case when def.dead_line_check is null then 1 else 0 end," +
             "cate.display_order nulls last, exec.execute_date_time"
             , nativeQuery = true
     )
-    List<TaskCheckQueryResult> findTaskCheckDisplay(@Param("ownerUserId") String ownerUserId);
+    List<TaskCheckQueryResult> findTaskCheckDisplay(
+            @Param("ownerUserId") String ownerUserId,
+            @Param("taskDefinitionId") String taskDefinitionId
+    );
 
     @Query(value = "select def.*, exec.execute_date_time as latest_exec_date_time, u.line_id as line_id " +
             "from task_definition def " +

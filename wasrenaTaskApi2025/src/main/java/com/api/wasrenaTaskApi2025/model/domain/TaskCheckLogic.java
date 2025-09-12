@@ -165,11 +165,9 @@ public class TaskCheckLogic {
             return ChronoUnit.HOURS.between(firstDateOfThisMonth, latestExecDateTime.get()) < 0;
         }
 
-        // 先月の該当日との比較
-        var lastMonthDate = now.minusMonths(1).withHour(0);
-        var lastMonthTargetDate = lastMonthDate.withDayOfMonth(monthlyDayValueOpt.get());
-
-        return ChronoUnit.HOURS.between(lastMonthTargetDate, latestExecDateTime.get()) < 0;
+        // 先月の1日との比較
+        var lastMonthFirstDate = now.minusMonths(1).withDayOfMonth(1).withHour(0);
+        return ChronoUnit.HOURS.between(lastMonthFirstDate, latestExecDateTime.get()) < 0;
     }
 
     // 年の指定した日のタスクの期限が超過しているか
@@ -280,11 +278,11 @@ public class TaskCheckLogic {
         if (latestExecDateTime.isPresent()
                 && ChronoUnit.HOURS.between(firstDayThisMonth.withHour(0), latestExecDateTime.get()) >= 0) {
             // 来月の末日
-            var nextDeadLineDateTime = firstDayThisMonth.plusMonths(2).minusDays(-1);
+            var nextDeadLineDateTime = firstDayThisMonth.plusMonths(2).minusDays(1);
             return Optional.of(nextDeadLineDateTime);
         } else {
             // 今月の末日
-            var nextDeadLineDateTime = firstDayThisMonth.plusMonths(1).minusDays(-1);
+            var nextDeadLineDateTime = firstDayThisMonth.plusMonths(1).minusDays(1);
             return Optional.of(nextDeadLineDateTime);
         }
     }
@@ -295,11 +293,14 @@ public class TaskCheckLogic {
         if (monthlyDayValueOpt.isEmpty()) {
             return Optional.empty();
         }
-        var targetOfThisMonth = now.withDayOfMonth(monthlyDayValueOpt.get());
 
-        // 現在日時の日より対象日が小さい場合
-        if (ChronoUnit.HOURS.between(now, targetOfThisMonth) < 0) {
-            // 来月の指定日
+        var targetOfThisMonth = now.withDayOfMonth(monthlyDayValueOpt.get());
+        var firstDayThisMonth = targetOfThisMonth.withDayOfMonth(1);
+        // 現在日時の日より対象日が小さい or 今月すでに実施済み
+        if (ChronoUnit.HOURS.between(now, targetOfThisMonth) < 0 ||
+                (latestExecDateTime.isPresent()
+                        && ChronoUnit.HOURS.between(firstDayThisMonth.withHour(0), latestExecDateTime.get()) >= 0)) {
+            // 来月の指定日を返す
             var targetOfNextMonth = targetOfThisMonth.plusMonths(1);
             return Optional.of(targetOfNextMonth);
         }

@@ -2,8 +2,9 @@ package com.api.wasrenaTaskApi2025.service.task;
 
 import com.api.wasrenaTaskApi2025.model.db.queryResult.TaskCheckQueryResult;
 import com.api.wasrenaTaskApi2025.model.domain.TaskCheckLogic;
-import com.api.wasrenaTaskApi2025.model.graphql.task.TaskCheckDisplayResponse;
+import com.api.wasrenaTaskApi2025.model.graphql.task.TaskCheckResponse;
 import com.api.wasrenaTaskApi2025.repository.TaskCheckRepository;
+import com.api.wasrenaTaskApi2025.repository.UserAccountRepository;
 import com.api.wasrenaTaskApi2025.service.common.DateService;
 import com.api.wasrenaTaskApi2025.service.line.LineMessageApiService;
 
@@ -28,54 +29,23 @@ public class TaskCheckService {
     LineMessageApiService lineMessageApiService;
     @Autowired
     TaskCheckRepository taskCheckRepository;
+    @Autowired
+    UserAccountRepository userAccountRepository;
 
     // チェック対象のタスク一覧を取得
-    public List<TaskCheckDisplayResponse> getTaskCheckDisplayList(String userId) {
+    public List<TaskCheckResponse> getTaskCheckDisplayList(String userId) {
         // DBからチェック対象の一覧を取得
-        var queryResultList = taskCheckRepository.findTaskCheckDisplay(userId);
+        var queryResultList = taskCheckRepository.findTaskCheckDisplay(userId, null);
 
         var nowDateTime = dateService.getNowDateTime();
-        var exceededList = new ArrayList<TaskCheckDisplayResponse>();
-        var notExceededList = new ArrayList<TaskCheckDisplayResponse>();
-        // 期限超過の判定と次回実行期限の取得
+        var exceededList = new ArrayList<TaskCheckResponse>();
+        var notExceededList = new ArrayList<TaskCheckResponse>();
         for (var queryResult : queryResultList) {
-            if (queryResult.getDeadLineCheckOptional().isEmpty()) {
-                notExceededList.add(
-                        convertResponseFromTaskCheckQueryResult(
-                                queryResult,
-                                Optional.empty(),
-                                false)
-                );
+            var response = convertResponseFromTaskCheckQueryResult(queryResult, nowDateTime);
+            if (response.isExceedDeadLine()) {
+                exceededList.add(response);
             } else {
-                // 期限判定を行うためドメインオブジェクトに
-                var taskCheckLogic = TaskCheckLogic
-                        .builder()
-                        .id(queryResult.getId())
-                        .title(queryResult.getTitle())
-                        .deadLineCheck(queryResult.getDeadLineCheck())
-                        .deadLineCheckSubSetting(queryResult.getDeadLineCheckSubSettingOptional())
-                        .latestExecDateTime(queryResult.getLatestExecDateTimeOptional())
-                        .build();
-                // 期限超過しているか
-                var isExceededDeadLine = taskCheckLogic.getIsExceededDeadLine(nowDateTime);
-                // 次回実行期限
-                var nextDeadLineDateTime = taskCheckLogic.getNextDeadLineDateTime(nowDateTime);
-
-                if (isExceededDeadLine) {
-                    exceededList.add(
-                            convertResponseFromTaskCheckQueryResult(
-                                    queryResult,
-                                    nextDeadLineDateTime,
-                                    true)
-                    );
-                } else {
-                    notExceededList.add(
-                            convertResponseFromTaskCheckQueryResult(
-                                    queryResult,
-                                    nextDeadLineDateTime,
-                                    false)
-                    );
-                }
+                notExceededList.add(response);
             }
         }
 
@@ -110,9 +80,11 @@ public class TaskCheckService {
                     .deadLineCheck(queryResult.getDeadLineCheck())
                     .deadLineCheckSubSetting(queryResult.getDeadLineCheckSubSettingOptional())
                     .latestExecDateTime(queryResult.getLatestExecDateTimeOptional())
+                    .ownerUserId(queryResult.getOwnerUserId())
                     .build();
-            // 期限超過しているか
+
             var isExceededDeadLine = taskCheckLogic.getIsExceededDeadLine(nowDateTime);
+            // 期限超過の有無で登録するリストを分ける
             if (isExceededDeadLine) {
                 if (lineIdNotifyCheckMap.containsKey(queryResult.getLineId())) {
                     lineIdNotifyCheckMap.put(
@@ -129,11 +101,16 @@ public class TaskCheckService {
             }
         }
 
-        // LINEメッセージ送信
         for (Map.Entry<String, List<TaskCheckLogic>> entry : lineIdNotifyCheckMap.entrySet()) {
+            // LINEメッセージ送信
             lineMessageApiService.sendMessageToUser(
                     entry.getKey(),
                     getExceededTasksMessage(entry.getValue())
+            );
+            // 通知日時を更新
+            userAccountRepository.updateLineNotifyLatestDate(
+                    entry.getValue().getFirst().getOwnerUserId(),
+                    OffsetDateTime.now()
             );
         }
 
@@ -141,25 +118,27 @@ public class TaskCheckService {
     }
 
     // チェック対象一覧クエリの結果をベースにレスポンス形式に変換
-    private TaskCheckDisplayResponse convertResponseFromTaskCheckQueryResult(
+    public TaskCheckResponse convertResponseFromTaskCheckQueryResult(
             TaskCheckQueryResult queryResult,
-            Optional<OffsetDateTime> nextDeadLineDateTime,
-            Boolean isExceedDeadLine) {
+            OffsetDateTime nowDateTime
+    ) {
+        if (queryResult.getDeadLineCheckOptional().isEmpty()) {
+            return new TaskCheckResponse(queryResult, Optional.empty(), false);
+        } else {
+            // 期限判定を行うためドメインオブジェクトに
+            var taskCheckLogic = TaskCheckLogic
+                    .builder()
+                    .id(queryResult.getId())
+                    .title(queryResult.getTitle())
+                    .deadLineCheck(queryResult.getDeadLineCheck())
+                    .deadLineCheckSubSetting(queryResult.getDeadLineCheckSubSettingOptional())
+                    .latestExecDateTime(queryResult.getLatestExecDateTimeOptional())
+                    .build();
+            var isExceededDeadLine = taskCheckLogic.getIsExceededDeadLine(nowDateTime);
+            var nextDeadLineDateTime = taskCheckLogic.getNextDeadLineDateTime(nowDateTime);
 
-        return new TaskCheckDisplayResponse(
-                queryResult.getId(),
-                queryResult.getTitle(),
-                queryResult.isDisplayFlag(),
-                queryResult.isNotificationFlag(),
-                queryResult.getCategoryIdOptional(),
-                queryResult.getCategoryNameOptional(),
-                queryResult.getDeadLineCheckOptional(),
-                queryResult.getDeadLineCheckSubSettingOptional(),
-                queryResult.getDetailOptional(),
-                queryResult.getLatestExecDateTimeOptional(),
-                nextDeadLineDateTime,
-                isExceedDeadLine
-        );
+            return new TaskCheckResponse(queryResult, nextDeadLineDateTime, isExceededDeadLine);
+        }
     }
 
     // 超過タスクのリストを元にメッセージの文字列を作成

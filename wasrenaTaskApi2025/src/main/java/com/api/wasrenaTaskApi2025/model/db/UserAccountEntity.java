@@ -1,7 +1,10 @@
 package com.api.wasrenaTaskApi2025.model.db;
 
+import com.api.wasrenaTaskApi2025.model.db.converter.OffsetDateTimeConverter;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.OffsetDateTime;
 
 @Entity
 @Getter
@@ -30,4 +33,8 @@ public class UserAccountEntity {
 
     @Column(name = "is_line_bot_follow")
     private Boolean isLineBotFollow;
+
+    @Column(name = "line_notify_latest_date")
+    @Convert(converter = OffsetDateTimeConverter.class)
+    private OffsetDateTime lineNotifyLatestDate;
 }

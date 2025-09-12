@@ -68,7 +68,7 @@ type TaskDefinitionResponse {
   detail: String
 }
 
-type TaskCheckDisplayResponse {
+type TaskCheckForListResponse {
   id: String!
   title: String!
   displayFlag: Boolean!
@@ -78,6 +78,13 @@ type TaskCheckDisplayResponse {
   deadLineCheck: DeadLineCheck
   deadLineCheckSubSetting: JSON
   detail: String
+  latestExecDateTime: DateTime
+  nextDeadLineDateTime: DateTime
+  isExceedDeadLine: Boolean!
+}
+
+type TaskCheckForMutationResponse {
+  id: String!
   latestExecDateTime: DateTime
   nextDeadLineDateTime: DateTime
   isExceedDeadLine: Boolean!
@@ -104,9 +111,11 @@ type Query {
   getTaskCategoryById(id: String!): TaskCategoryResponse
   getTaskDefinitions: [TaskDefinitionResponse!]
   getTaskDefinitionById(id: String!): TaskDefinitionResponse
-  getTaskCheckDisplayList: [TaskCheckDisplayResponse!]
+  getTaskCheckDisplayList: [TaskCheckForListResponse!]
   getTaskExecuteListByDefinitionId(
     taskDefinitionId: String!
+    startDateTime: DateTime
+    endDateTime: DateTime
   ): [TaskExecuteResponse!]
 }
 
@@ -120,6 +129,6 @@ type Mutation {
   createTaskDefinition(input: TaskDefinitionInput!): Boolean
   updateTaskDefinition(id: String!, input: TaskDefinitionInput!): Boolean
   deleteTaskDefinition(id: String!): Boolean
-  createTaskExecute(input: TaskExecuteInput!): Boolean
+  createTaskExecute(input: TaskExecuteInput!): TaskCheckForMutationResponse
   deleteTaskExecute(id: String!): Boolean
 }

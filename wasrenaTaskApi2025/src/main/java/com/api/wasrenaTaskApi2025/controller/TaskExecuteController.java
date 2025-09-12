@@ -1,5 +1,6 @@
 package com.api.wasrenaTaskApi2025.controller;
 
+import com.api.wasrenaTaskApi2025.model.graphql.task.TaskCheckResponse;
 import com.api.wasrenaTaskApi2025.model.graphql.taskExecute.TaskExecuteInput;
 import com.api.wasrenaTaskApi2025.model.graphql.taskExecute.TaskExecuteResponse;
 import com.api.wasrenaTaskApi2025.service.task.TaskExecuteService;
@@ -13,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Controller
@@ -23,12 +25,11 @@ public class TaskExecuteController {
     // タスク実行履歴の登録
     @PreAuthorize("isAuthenticated()")
     @MutationMapping
-    public boolean createTaskExecute(
+    public TaskCheckResponse createTaskExecute(
             @Argument TaskExecuteInput input,
             Authentication authentication) throws GraphqlErrorException {
         var userId = authentication.getPrincipal().toString();
-        taskExecuteService.createTaskExecute(input, userId);
-        return true;
+        return taskExecuteService.createTaskExecute(input, userId);
     }
 
     // タスク実行履歴の削除
@@ -46,8 +47,10 @@ public class TaskExecuteController {
     @QueryMapping
     public List<TaskExecuteResponse> getTaskExecuteListByDefinitionId(
             @Argument String taskDefinitionId,
+            @Argument OffsetDateTime startDateTime,
+            @Argument OffsetDateTime endDateTime,
             Authentication authentication) throws GraphqlErrorException {
         var userId = authentication.getPrincipal().toString();
-        return taskExecuteService.getTaskExecuteListByDefinitionId(taskDefinitionId, userId);
+        return taskExecuteService.getTaskExecuteListByDefinitionId(taskDefinitionId, userId, startDateTime, endDateTime);
     }
 }

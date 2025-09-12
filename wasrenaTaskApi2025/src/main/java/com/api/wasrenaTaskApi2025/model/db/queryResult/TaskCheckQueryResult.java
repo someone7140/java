@@ -1,15 +1,10 @@
 package com.api.wasrenaTaskApi2025.model.db.queryResult;
 
-import com.api.wasrenaTaskApi2025.model.db.TaskDefinitionEntity;
-
 import com.api.wasrenaTaskApi2025.model.db.base.TaskDefinitionEntityBase;
 import com.api.wasrenaTaskApi2025.model.db.converter.OffsetDateTimeConverter;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.TimeZoneColumn;
-import org.hibernate.annotations.TimeZoneStorage;
-import org.hibernate.annotations.TimeZoneStorageType;
 
 import java.time.OffsetDateTime;
 import java.util.Optional;

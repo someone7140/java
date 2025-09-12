@@ -1,6 +1,6 @@
 package com.api.wasrenaTaskApi2025.controller;
 
-import com.api.wasrenaTaskApi2025.model.graphql.task.TaskCheckDisplayResponse;
+import com.api.wasrenaTaskApi2025.model.graphql.task.TaskCheckResponse;
 import com.api.wasrenaTaskApi2025.model.graphql.task.TaskDefinitionInput;
 import com.api.wasrenaTaskApi2025.model.graphql.task.TaskDefinitionResponse;
 import com.api.wasrenaTaskApi2025.service.task.TaskCheckService;
@@ -79,7 +79,7 @@ public class TaskController {
     // チェック対象のタスク一覧取得
     @PreAuthorize("isAuthenticated()")
     @QueryMapping
-    public List<TaskCheckDisplayResponse> getTaskCheckDisplayList(Authentication authentication) throws GraphqlErrorException {
+    public List<TaskCheckResponse> getTaskCheckDisplayList(Authentication authentication) throws GraphqlErrorException {
         var userId = authentication.getPrincipal().toString();
         return taskCheckService.getTaskCheckDisplayList(userId);
     }
