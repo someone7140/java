@@ -1,9 +1,7 @@
 package com.api.wasrenaTaskApi2025.model.db.base;
 
-import com.api.wasrenaTaskApi2025.model.db.TaskCategoryEntity;
 import com.api.wasrenaTaskApi2025.model.enumeration.DeadLineCheck;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
